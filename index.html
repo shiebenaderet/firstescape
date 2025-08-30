@@ -686,6 +686,9 @@
 
         // Submit data to Google Form
         async function submitToGoogleForm() {
+            console.log('Starting form submission...');
+            console.log('Team data:', teamData);
+            
             // Your Google Form's action URL
             const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScDMt4MEoeKFC0STHc6aqR7qI72c6iSPKIVFI3TsF-I4CI7Qw/formResponse';
             
@@ -707,19 +710,73 @@
             formData.append('entry.1720027877', teamData.dreams.join(' | '));
             formData.append('entry.461631444', teamData.motto);
             formData.append('entry.787853294', teamData.completionTime);
-            formData.append('entry.1271213828', new Date().toString());
+            // Note: Timestamp is automatically added by Google Forms
+
+            // Log what we're sending
+            console.log('Form data being sent:');
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
 
             try {
-                await fetch(GOOGLE_FORM_URL, {
+                console.log('Attempting to submit to:', GOOGLE_FORM_URL);
+                
+                const response = await fetch(GOOGLE_FORM_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: formData
                 });
-                console.log('Data submitted successfully!');
+                
+                console.log('Submission completed. Response status:', response.status);
+                console.log('Data should now appear in your Google Sheet!');
+                
+                // Alternative submission method using iframe (fallback)
+                submitViaIframe(formData);
+                
             } catch (error) {
-                console.log('Form submission completed');
-                // Note: no-cors mode means we can't see the actual response, but the data still gets submitted
+                console.error('Submission error:', error);
+                
+                // Try alternative submission method
+                console.log('Trying alternative submission method...');
+                submitViaIframe(formData);
             }
+        }
+        
+        // Alternative submission method using hidden iframe
+        function submitViaIframe(formData) {
+            const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScDMt4MEoeKFC0STHc6aqR7qI72c6iSPKIVFI3TsF-I4CI7Qw/formResponse';
+            
+            // Create a hidden iframe
+            const iframe = document.createElement('iframe');
+            iframe.name = 'hidden_iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // Create a form element
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = GOOGLE_FORM_URL;
+            form.target = 'hidden_iframe';
+            
+            // Add form data as hidden inputs
+            for (let pair of formData.entries()) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = pair[0];
+                input.value = pair[1];
+                form.appendChild(input);
+            }
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Clean up
+            setTimeout(() => {
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+                console.log('Alternative submission method completed');
+            }, 2000);
         }
 
         // Victory screen
