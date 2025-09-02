@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape the Mystery Classroom</title>
+    <title>Mr. B's Classroom Escape</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -213,10 +213,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔐 Escape the Mystery Classroom 🔐</h1>
+        <h1>🔐 Mr. B's Classroom Escape 🔐</h1>
         
         <div class="story">
-            <strong>The Scenario:</strong> Your group has been chosen for a special after-school activity, but when you arrive at the mysterious Room 1610, the door locks behind you! A note appears on the smart board: "Welcome, brave students! To escape this room, you must work together to solve five challenges. Each challenge will test not only your minds but also help you discover amazing things about your teammates. Only by combining your unique strengths and sharing your stories can you find the key to freedom!" 
+            <strong>The Scenario:</strong> Your group has been chosen for a special after-school activity, but when you arrive at Mr. B's mysterious Room 1610, the door locks behind you! A note appears on the smart board: "Welcome, brave students! To escape my classroom, you must work together to solve five challenges. Each challenge will test not only your minds but also help you discover amazing things about your teammates. Only by combining your unique strengths and sharing your stories can you find the key to freedom!" 
+            <br><br><em>Note: This escape room works for teams of 3 or 4 members. Simply leave the extra fields blank if you have a team of 3!</em>
         </div>
 
         <div class="progress">
@@ -228,7 +229,19 @@
         <!-- Challenge 1: Team Introductions -->
         <div class="puzzle-container active" id="puzzle1">
             <div class="puzzle-title">🎭 Challenge 1: The Name Game Cipher</div>
-            <p>The first clue reads: "Before you can escape, I must know who you are. Enter each team member's name and their favorite subject in school. When all four names are entered, the cipher will reveal your next challenge!"</p>
+            <p>The first clue reads: "Before you can escape, I must know who you are. Enter your class period and each team member's name and their favorite subject in school. When all information is entered, the cipher will reveal your next challenge!"</p>
+            <p><em>Teams of 3: Leave the 4th member fields blank. Teams of 4: Fill out all fields!</em></p>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="color: #ffd700; font-weight: bold; display: block; margin-bottom: 5px;">Which class period are you in?</label>
+                <select id="period" style="width: 200px;">
+                    <option value="">Select Period</option>
+                    <option value="1">Period 1</option>
+                    <option value="2">Period 2</option>
+                    <option value="4">Period 4</option>
+                    <option value="5">Period 5</option>
+                </select>
+            </div>
             
             <div class="team-info">
                 <input type="text" id="name1" placeholder="Team Member 1 Name">
@@ -270,9 +283,9 @@
                     <option value="other">Other</option>
                 </select>
                 
-                <input type="text" id="name4" placeholder="Team Member 4 Name">
+                <input type="text" id="name4" placeholder="Team Member 4 Name (optional for teams of 3)">
                 <select id="subject4">
-                    <option value="">Choose Favorite Subject</option>
+                    <option value="">Choose Favorite Subject (optional for teams of 3)</option>
                     <option value="math">Math</option>
                     <option value="science">Science</option>
                     <option value="english">English</option>
@@ -286,9 +299,16 @@
             
             <button onclick="checkChallenge1()">Submit Team Info</button>
             <button class="hint-btn" onclick="toggleHint('hint1')">Need a Hint?</button>
+            <button class="hint-btn" onclick="showBonus('bonus1')" id="bonusBtn1" style="display:none; background: linear-gradient(45deg, #e67e22, #d35400);">Bonus Challenge!</button>
             
             <div class="hint" id="hint1">
                 💡 Make sure everyone's name is spelled correctly and each person picks their favorite subject. The cipher needs complete information!
+            </div>
+            
+            <div class="hint" id="bonus1" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22;">
+                🌟 <strong>BONUS:</strong> While waiting for other teams, create a quick team handshake or gesture that represents your group! 
+                <br><br><strong>On paper:</strong> Draw or write step-by-step instructions for your handshake. Include each person's name and their part in the sequence. Be creative - use arrows, stick figures, or words to show the moves!
+                <br><br><button onclick="hideBonus('bonus1')" style="margin-top:10px; padding:5px 10px; background:#e67e22; color:white; border:none; border-radius:3px;">Instructions written!</button>
             </div>
             
             <div class="success" id="success1"></div>
@@ -311,9 +331,16 @@
             
             <button onclick="checkChallenge2()" id="submitRiddle">Submit Answer</button>
             <button class="hint-btn" onclick="toggleHint('hint2')">Need a Hint?</button>
+            <button class="hint-btn" onclick="showBonus('bonus2')" id="bonusBtn2" style="display:none; background: linear-gradient(45deg, #e67e22, #d35400);">Bonus Challenge!</button>
             
             <div class="hint" id="hint2">
                 💡 Think about things you use every day in school that have "keys" and "space" but in a different way than you might first imagine!
+            </div>
+            
+            <div class="hint" id="bonus2" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22;">
+                🧩 <strong>BONUS RIDDLE:</strong> What gets wetter the more it dries? 
+                <br><br><strong>On paper:</strong> Write your team's answer and explain your reasoning. Why does this make sense? Discuss it as a team first, then have one person write your final answer and explanation.
+                <br><br><button onclick="hideBonus('bonus2')" style="margin-top:10px; padding:5px 10px; background:#e67e22; color:white; border:none; border-radius:3px;">Answer written!</button>
             </div>
             
             <div class="success" id="success2"></div>
@@ -329,14 +356,21 @@
                 <textarea id="dream1" placeholder="Team Member 1: What's one goal or dream you have for this school year?" rows="3"></textarea>
                 <textarea id="dream2" placeholder="Team Member 2: What's one goal or dream you have for this school year?" rows="3"></textarea>
                 <textarea id="dream3" placeholder="Team Member 3: What's one goal or dream you have for this school year?" rows="3"></textarea>
-                <textarea id="dream4" placeholder="Team Member 4: What's one goal or dream you have for this school year?" rows="3"></textarea>
+                <textarea id="dream4" placeholder="Team Member 4: What's one goal or dream you have for this school year? (Leave blank for teams of 3)" rows="3"></textarea>
             </div>
             
             <button onclick="checkChallenge3()">Share Our Dreams</button>
             <button class="hint-btn" onclick="toggleHint('hint3')">Need a Hint?</button>
+            <button class="hint-btn" onclick="showBonus('bonus3')" id="bonusBtn3" style="display:none; background: linear-gradient(45deg, #e67e22, #d35400);">Bonus Challenge!</button>
             
             <div class="hint" id="hint3">
                 💡 Dreams can be about academics, friendships, activities, sports, clubs, or personal growth. Be honest and encouraging with each other!
+            </div>
+            
+            <div class="hint" id="bonus3" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22;">
+                🎯 <strong>BONUS:</strong> Quick team challenge! Find one thing that ALL team members have in common (besides being in 8th grade). It could be a hobby, favorite food, pet, family setup, etc.
+                <br><br><strong>On paper:</strong> Write down what you discovered that everyone shares. Then write one sentence about why this surprised you or what you learned about your teammates.
+                <br><br><button onclick="hideBonus('bonus3')" style="margin-top:10px; padding:5px 10px; background:#e67e22; color:white; border:none; border-radius:3px;">Discovery written down!</button>
             </div>
             
             <div class="success" id="success3"></div>
@@ -348,7 +382,7 @@
             <div class="puzzle-title">🔢 Challenge 4: The Number Vault</div>
             <p>Amazing! Your shared dreams have unlocked a number vault! But there's a catch - you need to work together to solve this step-by-step:</p>
             
-            <p><strong>Step 1:</strong> Add up the total number of letters in all four team members' first names.</p>
+            <p><strong>Step 1:</strong> Add up the total number of letters in all your team members' first names.</p>
             <input type="number" id="nameLetters" placeholder="Total letters in all names">
             
             <p><strong>Step 2:</strong> Multiply that number by the number of different favorite subjects your team chose in Challenge 1.</p>
@@ -359,9 +393,16 @@
             
             <button onclick="checkChallenge4()">Open the Vault</button>
             <button class="hint-btn" onclick="toggleHint('hint4')">Need a Hint?</button>
+            <button class="hint-btn" onclick="showBonus('bonus4')" id="bonusBtn4" style="display:none; background: linear-gradient(45deg, #e67e22, #d35400);">Bonus Challenge!</button>
             
             <div class="hint" id="hint4">
                 💡 Work through this together! Count each letter carefully, figure out how many unique subjects were chosen, then do the math step by step.
+            </div>
+            
+            <div class="hint" id="bonus4" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22;">
+                🧮 <strong>BONUS MATH:</strong> If each team member high-fives every other team member exactly once, how many total high-fives happen in your team?
+                <br><br><strong>On paper:</strong> Show your math work! Draw a diagram or write out the calculation step by step. Then actually do all the high-fives and confirm your answer was correct.
+                <br><br><button onclick="hideBonus('bonus4')" style="margin-top:10px; padding:5px 10px; background:#e67e22; color:white; border:none; border-radius:3px;">Calculation complete!</button>
             </div>
             
             <div class="success" id="success4"></div>
@@ -373,7 +414,7 @@
             <div class="puzzle-title">🏆 Final Challenge: The Team Motto</div>
             <p>Incredible! You're so close to escaping! For your final challenge, you must work together to create a team motto or cheer that includes:</p>
             <ul>
-                <li>✅ All four team members' names</li>
+                <li>✅ All team members' names</li>
                 <li>✅ At least one subject someone mentioned as their favorite</li>
                 <li>✅ One shared goal or theme from your dreams</li>
                 <li>✅ The word "together"</li>
@@ -383,9 +424,16 @@
             
             <button onclick="checkChallenge5()">Escape the Room!</button>
             <button class="hint-btn" onclick="toggleHint('hint5')">Need a Hint?</button>
+            <button class="hint-btn" onclick="showBonus('bonus5')" id="bonusBtn5" style="display:none; background: linear-gradient(45deg, #e67e22, #d35400);">Final Bonus!</button>
             
             <div class="hint" id="hint5">
                 💡 Make it fun and positive! It could be a chant, a poem, or just a creative statement. The important thing is that it represents your whole team!
+            </div>
+            
+            <div class="hint" id="bonus5" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22;">
+                🎭 <strong>FINAL BONUS:</strong> Create a team victory pose or celebration move! Make it something uniquely yours that represents your team's personality.
+                <br><br><strong>On paper:</strong> Draw your victory pose using stick figures or describe it in words. Label each team member's position and what they're doing. You might want to use this when presenting your motto to the class!
+                <br><br><button onclick="hideBonus('bonus5')" style="margin-top:10px; padding:5px 10px; background:#e67e22; color:white; border:none; border-radius:3px;">Victory pose documented!</button>
             </div>
             
             <div class="success" id="success5"></div>
@@ -395,7 +443,7 @@
         <!-- Victory Screen -->
         <div class="celebration" id="celebration">
             <h2>🎉 CONGRATULATIONS! 🎉</h2>
-            <p><strong>You've successfully escaped the Mystery Classroom!</strong></p>
+            <p><strong>You've successfully escaped Mr. B's Classroom!</strong></p>
             <p>More importantly, you've discovered that by working together and sharing your unique strengths, dreams, and ideas, you can overcome any challenge!</p>
             <div id="completionTime"></div>
             <p><strong>What you accomplished:</strong></p>
@@ -404,12 +452,33 @@
                 <li>🧠 Solved puzzles using teamwork</li>
                 <li>💫 Shared your dreams and goals</li>
                 <li>🤝 Created a team motto together</li>
-                <li>🏆 Built stronger connections with your classmates</li>
+                <li>🏆 Built stronger connections with your teammates</li>
             </ul>
             <p style="margin-top: 30px; font-size: 1.3em; color: #fff;">
                 <strong>Remember: The best part of this year will be the friendships you build along the way!</strong>
             </p>
         </div>
+        
+        <!-- Hidden Google Form for reliable submission -->
+        <iframe name="hidden_iframe" style="display:none;"></iframe>
+        <form id="googleForm" style="display:none;" 
+              action="https://docs.google.com/forms/d/e/1FAIpQLScDMt4MEoeKFC0STHc6aqR7qI72c6iSPKIVFI3TsF-I4CI7Qw/formResponse"
+              method="POST" 
+              target="hidden_iframe">
+            <input type="hidden" name="entry.922930204" id="hiddenPeriod">
+            <input type="hidden" name="entry.1184799013" id="hiddenTeamSize">
+            <input type="hidden" name="entry.811675588" id="hiddenName1">
+            <input type="hidden" name="entry.634679781" id="hiddenSubject1">
+            <input type="hidden" name="entry.239320151" id="hiddenName2">
+            <input type="hidden" name="entry.416335857" id="hiddenSubject2">
+            <input type="hidden" name="entry.34419998" id="hiddenName3">
+            <input type="hidden" name="entry.1891192169" id="hiddenSubject3">
+            <input type="hidden" name="entry.1168482043" id="hiddenName4">
+            <input type="hidden" name="entry.543500904" id="hiddenSubject4">
+            <input type="hidden" name="entry.1720027877" id="hiddenDreams">
+            <input type="hidden" name="entry.461631444" id="hiddenMotto">
+            <input type="hidden" name="entry.787853294" id="hiddenCompletionTime">
+        </form>
     </div>
 
     <script>
@@ -422,42 +491,27 @@
             dreams: [],
             selectedRiddleOption: null,
             motto: '',
-            completionTime: ''
+            completionTime: '',
+            teamSize: 0
         };
 
         /*
-        TEACHER SETUP INSTRUCTIONS:
-        To collect student data in a Google Sheet, follow these steps:
-
-        1. Create a new Google Form with these questions (in this exact order):
-           - Period (Multiple choice: 1, 2, 4, 5)
-           - Team Member 1 Name (Short answer)
-           - Team Member 1 Favorite Subject (Short answer)
-           - Team Member 2 Name (Short answer)
-           - Team Member 2 Favorite Subject (Short answer)
-           - Team Member 3 Name (Short answer)
-           - Team Member 3 Favorite Subject (Short answer)
-           - Team Member 4 Name (Short answer)
-           - Team Member 4 Favorite Subject (Short answer)
-           - Dreams/Goals (Paragraph)
-           - Team Motto (Paragraph)
-           - Completion Time (Short answer)
-           - Timestamp (Short answer)
-
-        2. Get your form's action URL:
-           - Click "Send" on your form
-           - Click the link icon
-           - Copy the URL and change "viewform" to "formResponse"
-           - Replace YOUR_GOOGLE_FORM_ACTION_URL_HERE with this URL
-
-        3. Get field IDs:
-           - View source of your form
-           - Find each "entry.XXXXXXXXX" number for each question
-           - Replace the REPLACE_WITH_X_FIELD_ID placeholders below
-
-        4. Link to Google Sheets:
-           - In your form, click "Responses" tab
-           - Click the Google Sheets icon to create linked spreadsheet
+        SETUP COMPLETE! 
+        
+        Your escape room is now fully integrated with your Google Form.
+        When students complete the game, their data will automatically 
+        be submitted to your Google Sheet.
+        
+        The game captures:
+        - Class period (1, 2, 4, or 5)
+        - Team size (3 or 4 members)
+        - All team member names and favorite subjects
+        - Individual dreams/goals for the school year
+        - Team motto created together
+        - Completion time and timestamp
+        
+        Simply share this game with your students and the data will flow
+        directly into your connected Google Sheet!
         */
 
         // Timer function
@@ -482,6 +536,25 @@
         function toggleHint(hintId) {
             const hint = document.getElementById(hintId);
             hint.style.display = hint.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Show/hide bonus challenges
+        function showBonus(bonusId) {
+            document.getElementById(bonusId).style.display = 'block';
+        }
+
+        function hideBonus(bonusId) {
+            document.getElementById(bonusId).style.display = 'none';
+        }
+
+        // Show bonus buttons after a delay (so teams don't feel rushed)
+        function showBonusButton(buttonId) {
+            setTimeout(() => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.style.display = 'inline-block';
+                }
+            }, 3000); // 3 second delay
         }
 
         // Show success message
@@ -519,6 +592,7 @@
 
         // Challenge 1: Team Introductions
         function checkChallenge1() {
+            const period = document.getElementById('period').value;
             const names = [
                 document.getElementById('name1').value.trim(),
                 document.getElementById('name2').value.trim(),
@@ -533,15 +607,34 @@
                 document.getElementById('subject4').value
             ];
 
-            if (names.some(name => name === '') || subjects.some(subject => subject === '')) {
-                showError(1, "Please make sure all team members have entered their names and chosen their favorite subjects!");
+            if (!period) {
+                showError(1, "Please select your class period first!");
                 return;
             }
 
-            teamData.names = names;
-            teamData.subjects = subjects;
+            // Filter out empty names and subjects (for teams of 3)
+            const filledNames = names.filter(name => name !== '');
+            const filledSubjects = subjects.filter(subject => subject !== '');
+
+            // Check if we have at least 3 members and matching subjects
+            if (filledNames.length < 3) {
+                showError(1, "You need at least 3 team members! Please enter names for the first 3 members.");
+                return;
+            }
+
+            if (filledNames.length !== filledSubjects.length) {
+                showError(1, "Please make sure every team member who entered a name also chose their favorite subject!");
+                return;
+            }
+
+            // Store the actual team data (filtering out empty entries)
+            teamData.period = period;
+            teamData.names = filledNames;
+            teamData.subjects = filledSubjects;
+            teamData.teamSize = filledNames.length;
             
-            showSuccess(1, `Great! Welcome ${names.join(', ')}! The cipher has been decoded. Moving to the next challenge...`);
+            showSuccess(1, `Great! Welcome ${filledNames.join(', ')} from Period ${period}! The cipher has been decoded. Moving to the next challenge...`);
+            showBonusButton('bonusBtn1'); // Show bonus after completing challenge
             setTimeout(nextChallenge, 2000);
         }
 
@@ -565,6 +658,7 @@
 
             if (teamData.selectedRiddleOption === 'keyboard') {
                 showSuccess(2, "Correct! A keyboard has keys but no locks, space but no room, and you can enter but can't go outside!");
+                showBonusButton('bonusBtn2');
                 setTimeout(nextChallenge, 2000);
             } else {
                 showError(2, "Not quite right! Think about something you use every day that has 'keys' and a 'space' bar...");
@@ -580,13 +674,17 @@
                 document.getElementById('dream4').value.trim()
             ];
 
-            if (dreams.some(dream => dream === '' || dream.length < 10)) {
+            // Filter dreams based on actual team size
+            const relevantDreams = dreams.slice(0, teamData.teamSize);
+            
+            if (relevantDreams.some(dream => dream === '' || dream.length < 10)) {
                 showError(3, "Please make sure each team member shares at least a sentence about their dreams or goals!");
                 return;
             }
 
-            teamData.dreams = dreams;
+            teamData.dreams = relevantDreams;
             showSuccess(3, "Beautiful dreams! Your shared aspirations have unlocked the next challenge. Together, you can achieve anything!");
+            showBonusButton('bonusBtn3');
             setTimeout(nextChallenge, 2000);
         }
 
@@ -618,6 +716,7 @@
             }
 
             showSuccess(4, `Perfect calculations! The vault opens with code ${correctFinalCode}!`);
+            showBonusButton('bonusBtn4');
             setTimeout(nextChallenge, 2000);
         }
 
@@ -632,7 +731,7 @@
 
             const mottoLower = motto.toLowerCase();
             
-            // Check for all names
+            // Check for all names (only the actual team members)
             const allNamesIncluded = teamData.names.every(name => 
                 mottoLower.includes(name.toLowerCase())
             );
@@ -646,7 +745,7 @@
             const togetherIncluded = mottoLower.includes('together');
 
             if (!allNamesIncluded) {
-                showError(5, "Make sure to include all four team members' names in your motto!");
+                showError(5, "Make sure to include all team members' names in your motto!");
                 return;
             }
 
@@ -661,7 +760,47 @@
             }
 
             showSuccess(5, "AMAZING MOTTO! You've completed all challenges!");
+            showBonusButton('bonusBtn5');
             setTimeout(nextChallenge, 2000);
+        }
+
+        // Submit data to Google Form using reliable iframe method
+        function submitToGoogleForm() {
+            console.log('Starting form submission using iframe method...');
+            console.log('Team data:', teamData);
+            
+            // Populate hidden form inputs with team data
+            document.getElementById('hiddenPeriod').value = teamData.period;
+            document.getElementById('hiddenTeamSize').value = teamData.teamSize;
+            
+            // Team member data (use empty strings for missing members)
+            document.getElementById('hiddenName1').value = teamData.names[0] || '';
+            document.getElementById('hiddenSubject1').value = teamData.subjects[0] || '';
+            document.getElementById('hiddenName2').value = teamData.names[1] || '';
+            document.getElementById('hiddenSubject2').value = teamData.subjects[1] || '';
+            document.getElementById('hiddenName3').value = teamData.names[2] || '';
+            document.getElementById('hiddenSubject3').value = teamData.subjects[2] || '';
+            document.getElementById('hiddenName4').value = teamData.names[3] || '';
+            document.getElementById('hiddenSubject4').value = teamData.subjects[3] || '';
+            
+            document.getElementById('hiddenDreams').value = teamData.dreams.join(' | ');
+            document.getElementById('hiddenMotto').value = teamData.motto;
+            document.getElementById('hiddenCompletionTime').value = teamData.completionTime;
+            
+            console.log('Form populated with data, submitting...');
+            
+            // Submit the form
+            document.getElementById('googleForm').submit();
+            
+            console.log('Form submitted! Check your Google Sheet for the response.');
+            
+            // Optional: Show a subtle confirmation to students
+            setTimeout(() => {
+                const celebration = document.getElementById('celebration');
+                const confirmation = document.createElement('div');
+                confirmation.innerHTML = '<p style="color: #27ae60; font-weight: bold; margin-top: 20px;">✅ Your team data has been saved!</p>';
+                celebration.appendChild(confirmation);
+            }, 1000);
         }
 
         // Victory screen
@@ -670,8 +809,15 @@
             const minutes = Math.floor(elapsed / 60000);
             const seconds = Math.floor((elapsed % 60000) / 1000);
             
+            // Store completion data
+            teamData.completionTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            teamData.motto = document.getElementById('teamMotto').value.trim();
+            
+            // Submit data to Google Form
+            submitToGoogleForm();
+            
             document.getElementById('completionTime').innerHTML = 
-                `<strong>🕐 Completion Time: ${minutes}:${seconds.toString().padStart(2, '0')}</strong>`;
+                `<strong>🕐 Completion Time: ${teamData.completionTime}</strong>`;
             
             document.getElementById('celebration').style.display = 'block';
             updateProgress();
