@@ -593,47 +593,48 @@
         // Challenge 1: Team Introductions
         function checkChallenge1() {
             const period = document.getElementById('period').value;
-            const names = [
-                document.getElementById('name1').value.trim(),
-                document.getElementById('name2').value.trim(),
-                document.getElementById('name3').value.trim(),
-                document.getElementById('name4').value.trim()
-            ];
             
-            const subjects = [
-                document.getElementById('subject1').value,
-                document.getElementById('subject2').value,
-                document.getElementById('subject3').value,
-                document.getElementById('subject4').value
-            ];
-
             if (!period) {
                 showError(1, "Please select your class period first!");
                 return;
             }
 
-            // Filter out empty names and subjects (for teams of 3)
-            const filledNames = names.filter(name => name !== '');
-            const filledSubjects = subjects.filter(subject => subject !== '');
-
-            // Check if we have at least 3 members and matching subjects
-            if (filledNames.length < 3) {
-                showError(1, "You need at least 3 team members! Please enter names for the first 3 members.");
-                return;
-            }
-
-            if (filledNames.length !== filledSubjects.length) {
-                showError(1, "Please make sure every team member who entered a name also chose their favorite subject!");
-                return;
-            }
-
-            // Store the actual team data (filtering out empty entries)
-            teamData.period = period;
-            teamData.names = filledNames;
-            teamData.subjects = filledSubjects;
-            teamData.teamSize = filledNames.length;
+            // Check each member individually to ensure name-subject pairs match
+            const teamMembers = [];
             
-            showSuccess(1, `Great! Welcome ${filledNames.join(', ')} from Period ${period}! The cipher has been decoded. Moving to the next challenge...`);
+            // Check first 3 members (required)
+            for (let i = 1; i <= 3; i++) {
+                const name = document.getElementById(`name${i}`).value.trim();
+                const subject = document.getElementById(`subject${i}`).value;
+                
+                if (name === '' || subject === '') {
+                    showError(1, `Please enter both name and favorite subject for Team Member ${i}. The first 3 members are required.`);
+                    return;
+                }
+                
+                teamMembers.push({ name, subject });
+            }
+            
+            // Check 4th member (optional)
+            const name4 = document.getElementById('name4').value.trim();
+            const subject4 = document.getElementById('subject4').value;
+            
+            // If either name4 or subject4 is filled, both must be filled
+            if (name4 !== '' || subject4 !== '') {
+                if (name4 === '' || subject4 === '') {
+                    showError(1, "If you include a 4th team member, please enter both their name and favorite subject!");
+                    return;
+                }
+                teamMembers.push({ name: name4, subject: subject4 });
+            }
+
+            // Store the team data
+            teamData.period = period;
+            teamData.names = teamMembers.map(member => member.name);
+            teamData.subjects = teamMembers.map(member => member.subject);
+            teamData.teamSize = teamMembers.length;
+            
+            showSuccess(1, `Great! Welcome ${teamData.names.join(', ')} from Period ${period}! The cipher has been decoded. Moving to the next challenge...`);
             showBonusButton('bonusBtn1'); // Show bonus after completing challenge
             setTimeout(nextChallenge, 2000);
         }
