@@ -457,15 +457,50 @@
             
             <div style="margin-top: 30px; padding: 20px; background: rgba(230, 126, 34, 0.2); border-radius: 10px; border-left: 4px solid #e67e22;">
                 <h3 style="color: #e67e22; margin-bottom: 15px;">🌟 Bonus Challenges Available!</h3>
-                <p>While other teams finish, scroll back up to find orange "Bonus Challenge!" buttons after each completed section. These paper-based activities will give you extra things to work on:</p>
-                <ul style="text-align: left; margin: 10px 0;">
-                    <li>Design your team handshake</li>
-                    <li>Solve an extra riddle</li>
-                    <li>Find what you all have in common</li>
-                    <li>Calculate high-five combinations</li>
-                    <li>Create a victory pose</li>
-                </ul>
-                <p><strong>Remember:</strong> All bonus work should be done on paper for Mr. B to collect!</p>
+                <p>While other teams finish, click any of these bonus activities. All work should be done on paper for Mr. B to collect:</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                    <button onclick="showBonus('victoryBonus1')" style="background: linear-gradient(45deg, #e67e22, #d35400); padding: 10px; font-size: 0.9em;">Team Handshake Design</button>
+                    <button onclick="showBonus('victoryBonus2')" style="background: linear-gradient(45deg, #e67e22, #d35400); padding: 10px; font-size: 0.9em;">Extra Riddle Challenge</button>
+                    <button onclick="showBonus('victoryBonus3')" style="background: linear-gradient(45deg, #e67e22, #d35400); padding: 10px; font-size: 0.9em;">Find Common Ground</button>
+                    <button onclick="showBonus('victoryBonus4')" style="background: linear-gradient(45deg, #e67e22, #d35400); padding: 10px; font-size: 0.9em;">High-Five Math</button>
+                    <button onclick="showBonus('victoryBonus5')" style="background: linear-gradient(45deg, #e67e22, #d35400); padding: 10px; font-size: 0.9em;">Victory Pose Creation</button>
+                </div>
+                
+                <!-- Victory Bonus Challenge 1 -->
+                <div class="hint" id="victoryBonus1" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22; margin-top: 15px;">
+                    🌟 <strong>Team Handshake Design:</strong> Create a unique handshake or gesture that represents your group!
+                    <br><br><strong>On paper:</strong> Draw or write step-by-step instructions for your handshake. Include each person's name and their part in the sequence. Be creative - use arrows, stick figures, or words to show the moves!
+                    <br><br><button onclick="hideBonus('victoryBonus1')" style="margin-top:10px; padding:5px 10px; background:#95a5a6; color:white; border:none; border-radius:3px;">Close</button>
+                </div>
+                
+                <!-- Victory Bonus Challenge 2 -->
+                <div class="hint" id="victoryBonus2" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22; margin-top: 15px;">
+                    🧩 <strong>Extra Riddle:</strong> What gets wetter the more it dries?
+                    <br><br><strong>On paper:</strong> Write your team's answer and explain your reasoning. Why does this make sense? Discuss it as a team first, then have one person write your final answer and explanation.
+                    <br><br><button onclick="hideBonus('victoryBonus2')" style="margin-top:10px; padding:5px 10px; background:#95a5a6; color:white; border:none; border-radius:3px;">Close</button>
+                </div>
+                
+                <!-- Victory Bonus Challenge 3 -->
+                <div class="hint" id="victoryBonus3" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22; margin-top: 15px;">
+                    🎯 <strong>Find Common Ground:</strong> Find one thing that ALL team members have in common (besides being in 8th grade). It could be a hobby, favorite food, pet, family setup, etc.
+                    <br><br><strong>On paper:</strong> Write down what you discovered that everyone shares. Then write one sentence about why this surprised you or what you learned about your teammates.
+                    <br><br><button onclick="hideBonus('victoryBonus3')" style="margin-top:10px; padding:5px 10px; background:#95a5a6; color:white; border:none; border-radius:3px;">Close</button>
+                </div>
+                
+                <!-- Victory Bonus Challenge 4 -->
+                <div class="hint" id="victoryBonus4" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22; margin-top: 15px;">
+                    🧮 <strong>High-Five Math:</strong> If each team member high-fives every other team member exactly once, how many total high-fives happen in your team?
+                    <br><br><strong>On paper:</strong> Show your math work! Draw a diagram or write out the calculation step by step. Then actually do all the high-fives and confirm your answer was correct.
+                    <br><br><button onclick="hideBonus('victoryBonus4')" style="margin-top:10px; padding:5px 10px; background:#95a5a6; color:white; border:none; border-radius:3px;">Close</button>
+                </div>
+                
+                <!-- Victory Bonus Challenge 5 -->
+                <div class="hint" id="victoryBonus5" style="display:none; background: rgba(230, 126, 34, 0.2); border-left: 4px solid #e67e22; margin-top: 15px;">
+                    🎭 <strong>Victory Pose Creation:</strong> Create a team victory pose or celebration move! Make it something uniquely yours that represents your team's personality.
+                    <br><br><strong>On paper:</strong> Draw your victory pose using stick figures or describe it in words. Label each team member's position and what they're doing. You might want to use this when presenting your motto to the class!
+                    <br><br><button onclick="hideBonus('victoryBonus5')" style="margin-top:10px; padding:5px 10px; background:#95a5a6; color:white; border:none; border-radius:3px;">Close</button>
+                </div>
             </div>
             
             <p style="margin-top: 30px; font-size: 1.3em; color: #fff;">
