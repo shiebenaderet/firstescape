@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. B's Classroom Escape</title>
+    <title>Escape the Mystery Classroom</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -213,11 +213,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔐 Mr. B's Classroom Escape 🔐</h1>
+        <h1>🔐 Escape the Mystery Classroom 🔐</h1>
         
         <div class="story">
-            <strong>The Scenario:</strong> Your group has been chosen for a special after-school activity, but when you arrive at Mr. B's mysterious Room 1610, the door locks behind you! A note appears on the smart board: "Welcome, brave students! To escape my classroom, you must work together to solve five challenges. Each challenge will test not only your minds but also help you discover amazing things about your teammates. Only by combining your unique strengths and sharing your stories can you find the key to freedom!" 
-            <br><br><em>Note: This escape room works for teams of 3 or 4 members. Simply leave the extra fields blank if you have a team of 3!</em>
+            <strong>The Scenario:</strong> Your group has been chosen for a special after-school activity, but when you arrive at the mysterious Room 1610, the door locks behind you! A note appears on the smart board: "Welcome, brave students! To escape this room, you must work together to solve five challenges. Each challenge will test not only your minds but also help you discover amazing things about your teammates. Only by combining your unique strengths and sharing your stories can you find the key to freedom!" 
         </div>
 
         <div class="progress">
@@ -229,19 +228,7 @@
         <!-- Challenge 1: Team Introductions -->
         <div class="puzzle-container active" id="puzzle1">
             <div class="puzzle-title">🎭 Challenge 1: The Name Game Cipher</div>
-            <p>The first clue reads: "Before you can escape, I must know who you are. Enter your class period and each team member's name and their favorite subject in school. When all information is entered, the cipher will reveal your next challenge!"</p>
-            <p><em>Teams of 3: Leave the 4th member fields blank. Teams of 4: Fill out all fields!</em></p>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="color: #ffd700; font-weight: bold; display: block; margin-bottom: 5px;">Which class period are you in?</label>
-                <select id="period" style="width: 200px;">
-                    <option value="">Select Period</option>
-                    <option value="1">Period 1</option>
-                    <option value="2">Period 2</option>
-                    <option value="4">Period 4</option>
-                    <option value="5">Period 5</option>
-                </select>
-            </div>
+            <p>The first clue reads: "Before you can escape, I must know who you are. Enter each team member's name and their favorite subject in school. When all four names are entered, the cipher will reveal your next challenge!"</p>
             
             <div class="team-info">
                 <input type="text" id="name1" placeholder="Team Member 1 Name">
@@ -283,9 +270,9 @@
                     <option value="other">Other</option>
                 </select>
                 
-                <input type="text" id="name4" placeholder="Team Member 4 Name (optional for teams of 3)">
+                <input type="text" id="name4" placeholder="Team Member 4 Name">
                 <select id="subject4">
-                    <option value="">Choose Favorite Subject (optional for teams of 3)</option>
+                    <option value="">Choose Favorite Subject</option>
                     <option value="math">Math</option>
                     <option value="science">Science</option>
                     <option value="english">English</option>
@@ -342,7 +329,7 @@
                 <textarea id="dream1" placeholder="Team Member 1: What's one goal or dream you have for this school year?" rows="3"></textarea>
                 <textarea id="dream2" placeholder="Team Member 2: What's one goal or dream you have for this school year?" rows="3"></textarea>
                 <textarea id="dream3" placeholder="Team Member 3: What's one goal or dream you have for this school year?" rows="3"></textarea>
-                <textarea id="dream4" placeholder="Team Member 4: What's one goal or dream you have for this school year? (Leave blank for teams of 3)" rows="3"></textarea>
+                <textarea id="dream4" placeholder="Team Member 4: What's one goal or dream you have for this school year?" rows="3"></textarea>
             </div>
             
             <button onclick="checkChallenge3()">Share Our Dreams</button>
@@ -361,7 +348,7 @@
             <div class="puzzle-title">🔢 Challenge 4: The Number Vault</div>
             <p>Amazing! Your shared dreams have unlocked a number vault! But there's a catch - you need to work together to solve this step-by-step:</p>
             
-            <p><strong>Step 1:</strong> Add up the total number of letters in all your team members' first names.</p>
+            <p><strong>Step 1:</strong> Add up the total number of letters in all four team members' first names.</p>
             <input type="number" id="nameLetters" placeholder="Total letters in all names">
             
             <p><strong>Step 2:</strong> Multiply that number by the number of different favorite subjects your team chose in Challenge 1.</p>
@@ -386,7 +373,7 @@
             <div class="puzzle-title">🏆 Final Challenge: The Team Motto</div>
             <p>Incredible! You're so close to escaping! For your final challenge, you must work together to create a team motto or cheer that includes:</p>
             <ul>
-                <li>✅ All team members' names</li>
+                <li>✅ All four team members' names</li>
                 <li>✅ At least one subject someone mentioned as their favorite</li>
                 <li>✅ One shared goal or theme from your dreams</li>
                 <li>✅ The word "together"</li>
@@ -417,7 +404,7 @@
                 <li>🧠 Solved puzzles using teamwork</li>
                 <li>💫 Shared your dreams and goals</li>
                 <li>🤝 Created a team motto together</li>
-                <li>🏆 Built stronger connections with your teammates</li>
+                <li>🏆 Built stronger connections with your classmates</li>
             </ul>
             <p style="margin-top: 30px; font-size: 1.3em; color: #fff;">
                 <strong>Remember: The best part of this year will be the friendships you build along the way!</strong>
@@ -435,27 +422,42 @@
             dreams: [],
             selectedRiddleOption: null,
             motto: '',
-            completionTime: '',
-            teamSize: 0
+            completionTime: ''
         };
 
         /*
-        SETUP COMPLETE! 
-        
-        Your escape room is now fully integrated with your Google Form.
-        When students complete the game, their data will automatically 
-        be submitted to your Google Sheet.
-        
-        The game captures:
-        - Class period (1, 2, 4, or 5)
-        - Team size (3 or 4 members)
-        - All team member names and favorite subjects
-        - Individual dreams/goals for the school year
-        - Team motto created together
-        - Completion time and timestamp
-        
-        Simply share this game with your students and the data will flow
-        directly into your connected Google Sheet!
+        TEACHER SETUP INSTRUCTIONS:
+        To collect student data in a Google Sheet, follow these steps:
+
+        1. Create a new Google Form with these questions (in this exact order):
+           - Period (Multiple choice: 1, 2, 4, 5)
+           - Team Member 1 Name (Short answer)
+           - Team Member 1 Favorite Subject (Short answer)
+           - Team Member 2 Name (Short answer)
+           - Team Member 2 Favorite Subject (Short answer)
+           - Team Member 3 Name (Short answer)
+           - Team Member 3 Favorite Subject (Short answer)
+           - Team Member 4 Name (Short answer)
+           - Team Member 4 Favorite Subject (Short answer)
+           - Dreams/Goals (Paragraph)
+           - Team Motto (Paragraph)
+           - Completion Time (Short answer)
+           - Timestamp (Short answer)
+
+        2. Get your form's action URL:
+           - Click "Send" on your form
+           - Click the link icon
+           - Copy the URL and change "viewform" to "formResponse"
+           - Replace YOUR_GOOGLE_FORM_ACTION_URL_HERE with this URL
+
+        3. Get field IDs:
+           - View source of your form
+           - Find each "entry.XXXXXXXXX" number for each question
+           - Replace the REPLACE_WITH_X_FIELD_ID placeholders below
+
+        4. Link to Google Sheets:
+           - In your form, click "Responses" tab
+           - Click the Google Sheets icon to create linked spreadsheet
         */
 
         // Timer function
@@ -517,7 +519,6 @@
 
         // Challenge 1: Team Introductions
         function checkChallenge1() {
-            const period = document.getElementById('period').value;
             const names = [
                 document.getElementById('name1').value.trim(),
                 document.getElementById('name2').value.trim(),
@@ -532,33 +533,15 @@
                 document.getElementById('subject4').value
             ];
 
-            if (!period) {
-                showError(1, "Please select your class period first!");
+            if (names.some(name => name === '') || subjects.some(subject => subject === '')) {
+                showError(1, "Please make sure all team members have entered their names and chosen their favorite subjects!");
                 return;
             }
 
-            // Filter out empty names and subjects (for teams of 3)
-            const filledNames = names.filter(name => name !== '');
-            const filledSubjects = subjects.filter(subject => subject !== '');
-
-            // Check if we have at least 3 members and matching subjects
-            if (filledNames.length < 3) {
-                showError(1, "You need at least 3 team members! Please enter names for the first 3 members.");
-                return;
-            }
-
-            if (filledNames.length !== filledSubjects.length) {
-                showError(1, "Please make sure every team member who entered a name also chose their favorite subject!");
-                return;
-            }
-
-            // Store the actual team data (filtering out empty entries)
-            teamData.period = period;
-            teamData.names = filledNames;
-            teamData.subjects = filledSubjects;
-            teamData.teamSize = filledNames.length;
+            teamData.names = names;
+            teamData.subjects = subjects;
             
-            showSuccess(1, `Great! Welcome ${filledNames.join(', ')} from Period ${period}! The cipher has been decoded. Moving to the next challenge...`);
+            showSuccess(1, `Great! Welcome ${names.join(', ')}! The cipher has been decoded. Moving to the next challenge...`);
             setTimeout(nextChallenge, 2000);
         }
 
@@ -597,15 +580,12 @@
                 document.getElementById('dream4').value.trim()
             ];
 
-            // Filter dreams based on actual team size
-            const relevantDreams = dreams.slice(0, teamData.teamSize);
-            
-            if (relevantDreams.some(dream => dream === '' || dream.length < 10)) {
+            if (dreams.some(dream => dream === '' || dream.length < 10)) {
                 showError(3, "Please make sure each team member shares at least a sentence about their dreams or goals!");
                 return;
             }
 
-            teamData.dreams = relevantDreams;
+            teamData.dreams = dreams;
             showSuccess(3, "Beautiful dreams! Your shared aspirations have unlocked the next challenge. Together, you can achieve anything!");
             setTimeout(nextChallenge, 2000);
         }
@@ -652,7 +632,7 @@
 
             const mottoLower = motto.toLowerCase();
             
-            // Check for all names (only the actual team members)
+            // Check for all names
             const allNamesIncluded = teamData.names.every(name => 
                 mottoLower.includes(name.toLowerCase())
             );
@@ -666,7 +646,7 @@
             const togetherIncluded = mottoLower.includes('together');
 
             if (!allNamesIncluded) {
-                showError(5, "Make sure to include all team members' names in your motto!");
+                showError(5, "Make sure to include all four team members' names in your motto!");
                 return;
             }
 
@@ -684,60 +664,14 @@
             setTimeout(nextChallenge, 2000);
         }
 
-        // Submit data to Google Form using reliable iframe method
-        function submitToGoogleForm() {
-            console.log('Starting form submission using iframe method...');
-            console.log('Team data:', teamData);
-            
-            // Populate hidden form inputs with team data
-            document.getElementById('hiddenPeriod').value = teamData.period;
-            document.getElementById('hiddenTeamSize').value = teamData.teamSize;
-            
-            // Team member data (use empty strings for missing members)
-            document.getElementById('hiddenName1').value = teamData.names[0] || '';
-            document.getElementById('hiddenSubject1').value = teamData.subjects[0] || '';
-            document.getElementById('hiddenName2').value = teamData.names[1] || '';
-            document.getElementById('hiddenSubject2').value = teamData.subjects[1] || '';
-            document.getElementById('hiddenName3').value = teamData.names[2] || '';
-            document.getElementById('hiddenSubject3').value = teamData.subjects[2] || '';
-            document.getElementById('hiddenName4').value = teamData.names[3] || '';
-            document.getElementById('hiddenSubject4').value = teamData.subjects[3] || '';
-            
-            document.getElementById('hiddenDreams').value = teamData.dreams.join(' | ');
-            document.getElementById('hiddenMotto').value = teamData.motto;
-            document.getElementById('hiddenCompletionTime').value = teamData.completionTime;
-            
-            console.log('Form populated with data, submitting...');
-            
-            // Submit the form
-            document.getElementById('googleForm').submit();
-            
-            console.log('Form submitted! Check your Google Sheet for the response.');
-            
-            // Optional: Show a subtle confirmation to students
-            setTimeout(() => {
-                const celebration = document.getElementById('celebration');
-                const confirmation = document.createElement('div');
-                confirmation.innerHTML = '<p style="color: #27ae60; font-weight: bold; margin-top: 20px;">✅ Your team data has been saved!</p>';
-                celebration.appendChild(confirmation);
-            }, 1000);
-        }
-
         // Victory screen
         function showVictory() {
             const elapsed = Date.now() - startTime;
             const minutes = Math.floor(elapsed / 60000);
             const seconds = Math.floor((elapsed % 60000) / 1000);
             
-            // Store completion data
-            teamData.completionTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            teamData.motto = document.getElementById('teamMotto').value.trim();
-            
-            // Submit data to Google Form
-            submitToGoogleForm();
-            
             document.getElementById('completionTime').innerHTML = 
-                `<strong>🕐 Completion Time: ${teamData.completionTime}</strong>`;
+                `<strong>🕐 Completion Time: ${minutes}:${seconds.toString().padStart(2, '0')}</strong>`;
             
             document.getElementById('celebration').style.display = 'block';
             updateProgress();
