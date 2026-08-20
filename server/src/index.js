@@ -18,6 +18,11 @@
 // Secrets (set via `wrangler secret put` / .dev.vars):
 //   TEACHER_PASSWORD  — the teacher login passphrase
 //   AUTH_SECRET       — HMAC key used to sign session tokens
+//
+// Rate limits (per client IP, configured in wrangler.jsonc):
+//   POST /api/results  — 10/min  (RESULTS_LIMITER)
+//   POST /api/login    —  5/min  (LOGIN_LIMITER)
+//   Over the limit returns 429. Limiters fail open if the binding is absent.
 
 const enc = new TextEncoder();
 
@@ -118,6 +123,22 @@ async function readJson(request) {
   }
 }
 
+/**
+ * Best-effort per-IP rate limit. Returns true when the caller is over the limit.
+ * If the binding is missing (e.g. an older deploy or `wrangler dev` without the
+ * binding), this fails OPEN so gameplay never breaks because of a config gap.
+ */
+async function isRateLimited(limiter, request) {
+  if (!limiter) return false;
+  const key = request.headers.get('CF-Connecting-IP') || 'unknown';
+  try {
+    const { success } = await limiter.limit({ key });
+    return !success;
+  } catch {
+    return false;
+  }
+}
+
 /* -------------------------------- routes -------------------------------- */
 
 export default {
@@ -152,6 +173,9 @@ export default {
 
       // ---- Public: submit a completion ----
       if (pathname === '/api/results' && method === 'POST') {
+        if (await isRateLimited(env.RESULTS_LIMITER, request)) {
+          return json({ error: 'Too many submissions. Please wait a moment and try again.' }, 429, request, env);
+        }
         const body = await readJson(request);
         if (!body || !body.escapeId || typeof body.record !== 'object') {
           return json({ error: 'escapeId and record are required' }, 400, request, env);
@@ -177,6 +201,9 @@ export default {
 
       // ---- Teacher login ----
       if (pathname === '/api/login' && method === 'POST') {
+        if (await isRateLimited(env.LOGIN_LIMITER, request)) {
+          return json({ error: 'Too many login attempts. Please wait a minute and try again.' }, 429, request, env);
+        }
         const body = await readJson(request);
         const provided = body && typeof body.password === 'string' ? body.password : '';
         if (!env.TEACHER_PASSWORD || !env.AUTH_SECRET) {

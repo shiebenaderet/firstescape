@@ -16,32 +16,34 @@
 // }
 
 import { el } from '../engine/dom.js';
+import { normalizeAnswer } from './answerMatch.js';
 
 const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const SYMBOLS = '★☀☂☎☘☯☺☹✦✿❀❄❤⌘⌛⚑⚙⚡⛄⛅✈✂✒✎☂✆';
 
-function caesar(text, shift) {
+// These four are exported for unit tests; the activity itself uses them internally.
+export function caesar(text, shift) {
   return text.replace(/[a-z]/gi, (c) => {
     const base = c === c.toUpperCase() ? 65 : 97;
     return String.fromCharCode(((c.charCodeAt(0) - base + shift) % 26 + 26) % 26 + base);
   });
 }
-function atbash(text) {
+export function atbash(text) {
   return text.replace(/[a-z]/gi, (c) => {
     const base = c === c.toUpperCase() ? 65 : 97;
     return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
   });
 }
-function symbolize(text) {
+export function symbolize(text) {
   return text.replace(/[a-z]/gi, (c) => {
     const i = A.indexOf(c.toUpperCase());
     return i >= 0 ? SYMBOLS[i] : c;
   });
 }
 
-function normalize(v) {
-  return String(v).toLowerCase().replace(/[.,!?'"\-\s]+/g, ' ').trim();
-}
+// Answer matching is shared with the other free-text types — see answerMatch.js.
+// Imported (not just re-exported) because the mount logic below calls it directly.
+export const normalize = normalizeAnswer;
 
 export default {
   type: 'cipher',

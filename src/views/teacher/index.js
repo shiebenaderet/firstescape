@@ -37,7 +37,11 @@ function renderLogin(root, { onExit, onSuccess }) {
       await login(pw.value);
       onSuccess();
     } catch (err) {
-      msg.textContent = err.status === 401 ? 'Incorrect password.' : (err.message || 'Login failed.');
+      msg.textContent = err.status === 401
+        ? 'Incorrect password.'
+        : err.status === 429
+          ? 'Too many attempts. Please wait a minute and try again.'
+          : (err.message || 'Login failed.');
       msg.hidden = false;
       btn.disabled = false;
       btn.textContent = 'Log in';

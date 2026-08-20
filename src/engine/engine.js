@@ -12,19 +12,33 @@ import { renderVictory } from '../views/victory.js';
 
 const SOLVE_ADVANCE_DELAY = 1400;
 
-/** Resolve bank id strings / inline objects into concrete activities, each with a stable id. */
+/** Resolve bank id strings / inline objects into concrete activities, each with a stable id.
+ *  A bad entry becomes a visible "broken challenge" placeholder rather than throwing, so one
+ *  typo in a hand-edited definition can't take down the whole room mid-class. */
 function resolveActivities(escape, bank) {
   return (escape.activities || []).map((entry, i) => {
     let activity;
     if (typeof entry === 'string') {
       activity = bank[entry];
-      if (!activity) throw new Error(`Unknown bank activity id: "${entry}"`);
-    } else {
+      if (!activity) activity = brokenActivity(`Unknown bank activity id: "${entry}"`);
+    } else if (entry && typeof entry === 'object') {
       activity = entry;
+    } else {
+      activity = brokenActivity(`Challenge ${i + 1} is not a valid activity.`);
     }
     if (!activity.id) activity = { ...activity, id: `${escape.id}-activity-${i}` };
     return activity;
   });
+}
+
+/** Placeholder shown in place of a challenge that couldn't be resolved. Teams can skip past it. */
+function brokenActivity(detail) {
+  return {
+    type: 'broken',
+    title: 'This challenge could not be loaded',
+    icon: '⚠️',
+    config: { detail },
+  };
 }
 
 export function startEscape(root, escape, bank, { onExit } = {}) {
@@ -70,8 +84,24 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
     stepLabel,
   ]);
 
+  // Optional scene-setting text authored on the escape (builder: "Intro"). Shown while the
+  // team is still at the start, then it steps out of the way so the puzzle stays the focus.
+  const introEl = escape.intro
+    ? el('div', { class: 'escape-intro' }, [
+        el('span', { class: 'escape-intro-mark' }, '📜'),
+        el('p', { class: 'escape-intro-text' }, escape.intro),
+      ])
+    : null;
+
+  function updateIntro() {
+    if (!introEl) return;
+    const started = nonLinear ? solvedCount() > 0 : index > 0;
+    introEl.hidden = started;
+  }
+  updateIntro();
+
   clear(root);
-  root.appendChild(el('div', { class: 'runner' }, [header, stage]));
+  root.appendChild(el('div', { class: 'runner' }, [header, introEl, stage].filter(Boolean)));
 
   // ---- Timer -----------------------------------------------------------
   const fmt = (ms) => {
@@ -102,7 +132,17 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
   }
 
   // ---- Build a single activity card (shared by linear + non-linear) ----
-  function buildCard(activity, positionLabel, onSolve) {
+  function buildCard(rawActivity, positionLabel, onSolve) {
+    // Resolve the renderer up front. An unrecognized type falls back to the skippable
+    // placeholder (so an escape authored against a newer build still plays here), and the
+    // activity is rewritten to carry the reason BEFORE `api` closes over it.
+    let activity = rawActivity;
+    let type = getActivityType(activity.type);
+    if (!type) {
+      type = getActivityType('broken');
+      activity = { ...activity, config: { detail: `Unknown activity type: "${activity.type}"` } };
+    }
+
     const activityHost = el('div', { class: 'activity-host' });
     const messageEl = el('div', { class: 'message', hidden: true });
     const alreadySolved = !!state.solved[activity.id];
@@ -179,10 +219,7 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
       },
     };
 
-    const type = getActivityType(activity.type);
-    if (!type) {
-      showMessage('error', `Unknown activity type: "${activity.type}"`);
-    } else if (!alreadySolved) {
+    if (!alreadySolved) {
       type.mount(activityHost, api);
     } else {
       activityHost.appendChild(el('p', { class: 'solved-note' }, 'Your team already solved this one.'));
@@ -194,6 +231,7 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
   // ---- Linear mode -----------------------------------------------------
   function renderLinear() {
     updateProgress();
+    updateIntro();
     if (index >= total) return finish();
     const activity = activities[index];
     const card = buildCard(activity, `Challenge ${index + 1} of ${total}`, () => {
@@ -206,11 +244,13 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
   // ---- Non-linear mode -------------------------------------------------
   function renderNonLinear() {
     updateProgress();
+    updateIntro();
     if (solvedCount() >= total) return finish();
     const board = el('div', { class: 'board' },
       activities.map((activity, i) =>
         buildCard(activity, `Puzzle ${i + 1}`, () => {
           updateProgress();
+          updateIntro();
           persist();
           if (solvedCount() >= total) setTimeout(finish, SOLVE_ADVANCE_DELAY);
         })
@@ -225,6 +265,7 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
   // ---- Victory ---------------------------------------------------------
   function finish() {
     stop();
+    if (introEl) introEl.hidden = true;
     const completionTime = fmt(Date.now() - (state.startedAt || Date.now()));
     const meta = { completionTime, escapeId: escape.id, escapeTitle: escape.title };
     const { record, sinkResults } = recordResults(escape, state, meta);

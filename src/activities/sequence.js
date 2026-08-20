@@ -40,12 +40,13 @@ export default {
   mount(host, api) {
     const cfg = api.activity.config || {};
     const answer = cfg.answer || [];
+    const padList = cfg.pads || [];
     let entered = [];
 
     const enteredEl = el('div', { class: 'sequence-entered' });
     function renderEntered() {
       enteredEl.textContent = entered.length
-        ? entered.map((id) => (cfg.pads.find((p) => p.id === id) || {}).label || id).join('  →  ')
+        ? entered.map((id) => (padList.find((p) => p.id === id) || {}).label || id).join('  →  ')
         : 'Press the pads in order…';
     }
     renderEntered();
@@ -60,7 +61,7 @@ export default {
       renderEntered();
     }
 
-    const pads = (cfg.pads || []).map((pad) =>
+    const pads = padList.map((pad) =>
       el('button', {
         class: 'seq-pad',
         'aria-label': `Play ${pad.label}`,
@@ -83,6 +84,10 @@ export default {
     ]));
 
     function submit() {
+      if (!answer.length) {
+        api.error('No secret sequence has been set for this challenge yet — ask your teacher.');
+        return;
+      }
       if (entered.length !== answer.length) {
         api.error(`That's ${entered.length} presses — the code is ${answer.length} long. Press "Clear" to retry.`);
         return;

@@ -19,6 +19,9 @@ export const bank = {
       src: 'assets/media/locker-riddle.mp4',
       captions: 'assets/media/locker-riddle.vtt',
       label: 'Mr. B reads the riddle',
+      // TODO(teacher): replace assets/media/locker-riddle.mp4 with a real recording,
+      // then delete this flag. Until then students see a "sample clip" note.
+      placeholder: true,
       text: 'I have keys but no locks. I have space but no room. You can enter, but you can\'t go outside. What am I?',
     },
     config: {
@@ -50,6 +53,9 @@ export const bank = {
       src: 'assets/media/candle-riddle.m4a',
       captions: 'assets/media/candle-riddle.vtt',
       label: 'Listen to the riddle',
+      // TODO(teacher): replace assets/media/candle-riddle.m4a with a real recording,
+      // then delete this flag. Until then students see a "sample clip" note.
+      placeholder: true,
       text: 'The more you take, the more you leave behind. What am I?',
     },
     config: {

@@ -91,6 +91,44 @@ export const ACTIVITY_SCHEMAS = [
     defaults: () => ({ prompt: '', requirements: [''], minLength: 20, checks: [] }),
   },
   {
+    type: 'sequence',
+    icon: '🎵',
+    label: 'Sound / pattern sequence',
+    description: 'Team presses pads in the right order — a musical or pattern lock.',
+    fields: [
+      { key: 'prompt', label: 'Instruction', kind: 'textarea', placeholder: 'Press the pads in the right order…' },
+      { key: 'pads', label: 'Pads', kind: 'pads' },
+      { key: 'successMessage', label: 'On correct (optional)', kind: 'text' },
+      { key: 'wrongMessage', label: 'On wrong (optional)', kind: 'text' },
+    ],
+    // Four pads with a rising major-chord feel; the answer is authored in the pads editor.
+    defaults: () => ({
+      prompt: '',
+      pads: [
+        { id: 'p1', label: 'Do', freq: 262 },
+        { id: 'p2', label: 'Mi', freq: 330 },
+        { id: 'p3', label: 'Sol', freq: 392 },
+        { id: 'p4', label: 'Do↑', freq: 523 },
+      ],
+      answer: [],
+      showAnswerLength: true,
+    }),
+  },
+  {
+    type: 'geo-check',
+    icon: '📍',
+    label: 'Go to a place (GPS)',
+    description: 'Team walks to a real spot; the device confirms they arrived.',
+    fields: [
+      { key: 'prompt', label: 'Instruction', kind: 'textarea', placeholder: 'Find the spot where…' },
+      { key: 'lat', label: 'Latitude', kind: 'number', placeholder: '40.7128' },
+      { key: 'lng', label: 'Longitude', kind: 'number', placeholder: '-74.0060' },
+      { key: 'radiusMeters', label: 'How close they must get (meters)', kind: 'number' },
+      { key: 'successMessage', label: 'On arrival (optional)', kind: 'text' },
+    ],
+    defaults: () => ({ prompt: '', radiusMeters: 40, allowOverride: true }),
+  },
+  {
     type: 'team-setup',
     icon: '🧑‍🤝‍🧑',
     label: 'Team sign-in',

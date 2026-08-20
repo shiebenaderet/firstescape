@@ -1,9 +1,39 @@
 // Teacher results view: centralized completions from every device/class, with summary
-// tiles, an escape filter, a table, and CSV/JSON export.
+// tiles, an escape filter, a table, expandable per-team answers, and CSV/JSON export.
+//
+// Each row in D1 carries the full record JSON in `data` — including every per-activity
+// answer the team wrote (`answer:<activityId>` keys built by buildDefaultRecord). The table
+// stays scannable, and expanding a row reveals that student work; exports include it too.
 
 import { el, clear, mount } from '../../engine/dom.js';
 import { fetchAllResults } from '../../engine/apiClient.js';
 import { toCSV, downloadFile } from '../../engine/results.js';
+
+/** Parse the stored record JSON for a row; returns {} when absent or malformed. */
+function recordOf(row) {
+  if (!row || !row.data) return {};
+  try {
+    const parsed = JSON.parse(row.data);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/** The per-activity answers a team wrote, as [{ label, value }] in a readable order. */
+export function answersOf(row) {
+  const rec = recordOf(row);
+  return Object.entries(rec)
+    .filter(([k]) => k.startsWith('answer:'))
+    .map(([k, v]) => ({ label: prettyLabel(k.slice('answer:'.length)), value: v }))
+    .filter((a) => a.value !== '' && a.value != null);
+}
+
+/** Turn an activity id like "cipher-lab-riddle-2" into "Cipher lab riddle 2". */
+export function prettyLabel(id) {
+  const s = String(id).replace(/[-_]+/g, ' ').trim();
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : id;
+}
 
 export function renderTeacherResults(host) {
   mount(host, el('div', { class: 'dash-loading' }, 'Loading results…'));
@@ -67,16 +97,69 @@ function renderLoaded(host, allRows) {
       ['team', 'Team'],
       ['completion_time', 'Time'],
     ];
+
+    const body = el('tbody', {});
+    for (const r of list) {
+      const answers = answersOf(r);
+
+      // Detail row holding this team's written work; toggled by the button below.
+      const detail = el('tr', { class: 'results-detail-row', hidden: true }, [
+        el('td', { colspan: String(cols.length + 1) }, [
+          answers.length
+            ? el('dl', { class: 'answer-list' }, answers.flatMap((a) => [
+                el('dt', {}, a.label),
+                el('dd', {}, String(a.value)),
+              ]))
+            : el('p', { class: 'muted' }, 'This team’s room recorded no written answers.'),
+        ]),
+      ]);
+
+      const toggle = el('button', {
+        class: 'link-btn',
+        'aria-expanded': 'false',
+        disabled: !answers.length,
+        title: answers.length ? 'Show what this team wrote' : 'No written answers recorded',
+      }, answers.length ? `Show answers (${answers.length})` : '—');
+
+      toggle.addEventListener('click', () => {
+        const open = detail.hidden;
+        detail.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.textContent = open ? 'Hide answers' : `Show answers (${answers.length})`;
+      });
+
+      body.append(
+        el('tr', {}, [
+          ...cols.map(([k]) => el('td', {}, r[k] == null ? '' : String(r[k]))),
+          el('td', {}, toggle),
+        ]),
+        detail
+      );
+    }
+
     tableWrap.appendChild(el('table', { class: 'results-table' }, [
-      el('thead', {}, el('tr', {}, cols.map(([, label]) => el('th', {}, label)))),
-      el('tbody', {}, list.map((r) => el('tr', {}, cols.map(([k]) => el('td', {}, r[k] == null ? '' : String(r[k])))))),
+      el('thead', {}, el('tr', {}, [
+        ...cols.map(([, label]) => el('th', {}, label)),
+        el('th', {}, 'Answers'),
+      ])),
+      body,
     ]));
   }
 
+  // Exports carry the written answers too — toCSV unions keys across rows, so teams that
+  // played different rooms still line up into one sheet (blank where a column doesn't apply).
   function exportRows(kind) {
-    const list = rows().map((r) => ({
-      when: r.created_at, escape: r.escape_title, period: r.period, team: r.team, time: r.completion_time,
-    }));
+    const list = rows().map((r) => {
+      const flat = {
+        when: r.created_at,
+        escape: r.escape_title,
+        period: r.period,
+        team: r.team,
+        time: r.completion_time,
+      };
+      for (const a of answersOf(r)) flat[a.label] = a.value;
+      return flat;
+    });
     if (!list.length) return;
     const base = currentEscape || 'all-escapes';
     if (kind === 'csv') downloadFile(`${base}-results.csv`, toCSV(list), 'text/csv');
@@ -108,7 +191,7 @@ function tile(icon, value, label) {
   ]);
 }
 
-function fastestTime(list) {
+export function fastestTime(list) {
   const times = list.map((r) => r.completion_time).filter(Boolean);
   if (!times.length) return '—';
   const toSec = (t) => {

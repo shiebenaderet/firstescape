@@ -193,6 +193,10 @@ function openEditor(host, source, { onPublished, isNew }) {
       ]),
       numberField('Estimated minutes', escape.estimatedMinutes, (v) => { escape.estimatedMinutes = v; }),
       textField('Grade band (optional)', escape.gradeBand, (v) => { escape.gradeBand = v; }),
+      selectField('How students move through it', [
+        { value: 'linear', label: 'One at a time, in order (recommended)' },
+        { value: 'non-linear', label: 'All puzzles at once, any order' },
+      ], escape.structure || 'linear', (v) => { escape.structure = v; }),
       textareaField('Short summary (shown on the hub card)', escape.summary, (v) => { escape.summary = v; }),
       textareaField('Intro (shown when the escape starts)', escape.intro, (v) => { escape.intro = v; }),
     ]);
@@ -315,6 +319,7 @@ function openEditor(host, source, { onPublished, isNew }) {
     if (f.kind === 'select') return selectField(f.label, f.options, cfg[f.key], (v) => { cfg[f.key] = v; refreshPreview(a); });
     if (f.kind === 'stringlist') { if (!Array.isArray(cfg[f.key])) cfg[f.key] = []; return stringListField(f.label, cfg[f.key], f.placeholder); }
     if (f.kind === 'options') return optionsField(cfg, () => renderEditor(), () => refreshPreview(a));
+    if (f.kind === 'pads') return padsField(cfg, () => renderEditor(), () => refreshPreview(a));
     return null;
   }
 
@@ -450,6 +455,76 @@ function optionsField(cfg, rerender, refresh) {
   });
   const add = el('button', { class: 'link-btn', on: { click: () => { const id = Math.random().toString(36).slice(2, 6); cfg.options.push({ id, label: '' }); rerender(); } } }, '＋ Add choice');
   return labelWrap('Choices (select the correct one)', el('div', { class: 'options-editor' }, [...rows, add]));
+}
+
+// Pads + the secret order, for the `sequence` activity. Teachers name each pad and set its
+// tone, then click pads in order to record the answer — much clearer than typing pad ids.
+function padsField(cfg, rerender, refresh) {
+  if (!Array.isArray(cfg.pads)) cfg.pads = [];
+  if (!Array.isArray(cfg.answer)) cfg.answer = [];
+
+  const padRows = cfg.pads.map((pad, idx) => {
+    const label = el('input', { type: 'text', class: 'field', value: pad.label || '', placeholder: `Pad ${idx + 1} name` });
+    label.addEventListener('input', () => { pad.label = label.value; refresh && refresh(); });
+    const freq = el('input', { type: 'number', class: 'field', value: pad.freq == null ? '' : pad.freq, placeholder: 'Tone Hz' });
+    freq.addEventListener('input', () => { pad.freq = freq.value === '' ? undefined : Number(freq.value); refresh && refresh(); });
+    return el('div', { class: 'option-row' }, [
+      label,
+      freq,
+      el('button', {
+        class: 'icon-btn danger', title: 'Remove pad', type: 'button',
+        on: {
+          click: () => {
+            cfg.pads.splice(idx, 1);
+            cfg.answer = cfg.answer.filter((id) => id !== pad.id); // drop it from the order too
+            rerender();
+          },
+        },
+      }, '✕'),
+    ]);
+  });
+
+  const addPad = el('button', {
+    class: 'link-btn', type: 'button',
+    on: {
+      click: () => {
+        const id = `p${Math.random().toString(36).slice(2, 6)}`;
+        cfg.pads.push({ id, label: '', freq: 330 });
+        rerender();
+      },
+    },
+  }, '＋ Add pad');
+
+  // The answer: click pads in order to build the sequence.
+  const answerPreview = el('div', { class: 'seq-answer-preview' });
+  function drawAnswer() {
+    answerPreview.textContent = cfg.answer.length
+      ? cfg.answer.map((id) => (cfg.pads.find((p) => p.id === id) || {}).label || '?').join('  →  ')
+      : 'No sequence set yet — click pads below in the order students must press them.';
+  }
+  drawAnswer();
+
+  const pickers = cfg.pads.map((pad) =>
+    el('button', {
+      class: 'btn btn-ghost seq-pick', type: 'button',
+      on: { click: () => { cfg.answer.push(pad.id); drawAnswer(); refresh && refresh(); } },
+    }, pad.label || '(unnamed)')
+  );
+
+  const clearAnswer = el('button', {
+    class: 'link-btn', type: 'button',
+    on: { click: () => { cfg.answer.length = 0; drawAnswer(); refresh && refresh(); } },
+  }, 'Clear sequence');
+
+  return labelWrap('Pads and secret order', el('div', { class: 'options-editor' }, [
+    el('p', { class: 'muted' }, 'Name each pad and give it a tone (Hz). Higher numbers sound higher.'),
+    ...padRows,
+    addPad,
+    el('div', { class: 'builder-section-title' }, 'Secret order'),
+    answerPreview,
+    el('div', { class: 'seq-pick-row' }, pickers),
+    clearAnswer,
+  ]));
 }
 
 /* ---- emoji picker ---- */

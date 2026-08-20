@@ -9,11 +9,13 @@
 // Config:
 // {
 //   prompt?: string,
-//   target: { lat: number, lng: number },
+//   target: { lat: number, lng: number },   // code-defined escapes
+//   lat?: number, lng?: number,             // flat form (what the visual builder writes)
 //   radiusMeters?: number,       // default 40
 //   allowOverride?: boolean,     // show a teacher/testing override button (default true)
 //   successMessage?: string
 // }
+// `target` and flat `lat`/`lng` are equivalent; flat wins if both are present.
 
 import { el } from '../engine/dom.js';
 
@@ -35,7 +37,14 @@ export default {
   mount(host, api) {
     const cfg = api.activity.config || {};
     const radius = cfg.radiusMeters ?? 40;
-    const status = el('div', { class: 'geo-status' }, 'Tap “Check my location” when your team reaches the spot.');
+    // Accept either the nested `target` (code-defined) or flat lat/lng (visual builder).
+    const target = Number.isFinite(Number(cfg.lat)) && Number.isFinite(Number(cfg.lng))
+      ? { lat: Number(cfg.lat), lng: Number(cfg.lng) }
+      : cfg.target;
+    const hasTarget = target && Number.isFinite(Number(target.lat)) && Number.isFinite(Number(target.lng));
+    const status = el('div', { class: 'geo-status' }, hasTarget
+      ? 'Tap “Check my location” when your team reaches the spot.'
+      : '⚠️ No location has been set for this challenge yet — ask your teacher, or use the override below.');
 
     function solveOk(distance) {
       status.textContent = distance != null
@@ -47,6 +56,10 @@ export default {
     }
 
     function check() {
+      if (!hasTarget) {
+        api.error('This challenge has no location set yet. Your teacher can add one, or use the override.');
+        return;
+      }
       if (!('geolocation' in navigator)) {
         status.textContent = '⚠️ This device can\'t check location. Use the teacher override.';
         api.error('Geolocation is not available on this device.');
@@ -56,7 +69,7 @@ export default {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          const distance = haversine(here, cfg.target);
+          const distance = haversine(here, target);
           if (distance <= radius) solveOk(distance);
           else {
             status.textContent = `You're about ${Math.round(distance)} m away — keep going! (need to be within ${radius} m)`;

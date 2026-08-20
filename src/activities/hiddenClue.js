@@ -14,10 +14,7 @@
 // }
 
 import { el } from '../engine/dom.js';
-
-function normalize(v) {
-  return String(v).toLowerCase().replace(/[.,!?'"\-\s]+/g, ' ').trim();
-}
+import { normalizeAnswer as normalize } from './answerMatch.js';
 
 export default {
   type: 'hidden-clue',

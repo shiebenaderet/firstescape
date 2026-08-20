@@ -296,11 +296,32 @@ select.field { cursor: pointer; }
 .geo-override { font-size: 0.85rem; }
 
 /* ---------------- Non-linear board ---------------- */
+/* Escape intro — optional scene-setting text, shown until the team solves the first puzzle.
+   Uses the same parchment voice as .puzzle-story so it reads as part of the story. */
+.escape-intro {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--parchment);
+  border: 1px solid var(--parchment-edge);
+  border-left: 5px solid var(--amber);
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  color: #4a3d2a;
+}
+.escape-intro[hidden] { display: none; }
+.escape-intro-mark { font-size: 1.3rem; line-height: 1.3; flex-shrink: 0; }
+.escape-intro-text { margin: 0; font-size: 1.06rem; }
+
 .board-intro { text-align: center; color: var(--ink-soft); margin-bottom: 16px; font-weight: 700; }
 .board { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
 .board .puzzle-card { margin: 0; border-left-color: var(--grape); }
 .puzzle-card.solved { border-color: var(--green); border-left-color: var(--green); }
 .solved-badge { display: inline-block; background: #dff5e6; color: #12633a; border-left: 5px solid var(--green); padding: 6px 12px; border-radius: 8px; font-weight: 800; margin-bottom: 10px; }
+/* Explicit, because `display: inline-block` above would otherwise beat the hidden attribute
+   and show "✓ Solved" on puzzles the team hasn't solved yet. */
+.solved-badge[hidden] { display: none; }
 .solved-note { color: var(--ink-soft); }
 
 /* ---------------- Results dashboard ---------------- */
@@ -313,6 +334,14 @@ select.field { cursor: pointer; }
 .results-table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
 .results-table th, .results-table td { border: 1px solid var(--line); padding: 9px 11px; text-align: left; vertical-align: top; }
 .results-table th { background: var(--bg-tint); color: var(--ink); white-space: nowrap; font-family: var(--font-display); }
+
+/* Expandable per-team answers */
+.results-detail-row[hidden] { display: none; }
+.results-detail-row > td { background: var(--parchment); }
+.answer-list { margin: 0; display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 6px 16px; align-items: baseline; }
+.answer-list dt { font-weight: 800; color: var(--ink-soft); font-size: 0.86rem; }
+.answer-list dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .answer-list { grid-template-columns: 1fr; gap: 2px 0; } .answer-list dd { margin-bottom: 8px; } }
 .results-empty { color: var(--ink-soft); }
 
 /* ---------------- Victory ---------------- */
@@ -342,6 +371,8 @@ select.field { cursor: pointer; }
 
 /* ================= Teacher dashboard ================= */
 .muted { color: var(--ink-soft); }
+.broken-detail { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; color: var(--ink-soft); background: var(--bg-tint); border-radius: 8px; padding: 8px 10px; }
+.clue-placeholder { margin: 0 0 8px; font-size: 0.9rem; font-weight: 700; color: var(--amber); }
 .dash-loading, .dash-error { padding: 40px; text-align: center; color: var(--ink-soft); }
 
 .teacher-login { max-width: 420px; margin: 8vh auto 0; }
@@ -444,10 +475,26 @@ select.field { cursor: pointer; }
 .option-row { display: flex; gap: 8px; align-items: center; }
 .option-row .field { margin: 0; }
 
+/* Sequence pads editor (builder) */
+.seq-answer-preview {
+  background: var(--bg-tint);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.seq-pick-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.seq-pick { padding: 8px 14px; font-size: 0.95rem; }
+
 /* Emoji picker */
 .emoji-picker { position: relative; display: inline-block; }
 .emoji-current { font-size: 1.6rem; width: 52px; height: 46px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
 .emoji-grid { position: absolute; z-index: 10; top: 52px; left: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 8px; box-shadow: var(--shadow-lg); }
+/* `display: grid` above beats the `hidden` attribute's UA default, so state it explicitly —
+   without this the popup stays painted even though grid.hidden is true. */
+.emoji-grid[hidden] { display: none; }
 .emoji-opt { font-size: 1.4rem; width: 40px; height: 40px; border: none; background: none; cursor: pointer; border-radius: 8px; }
 .emoji-opt:hover { background: var(--bg-tint); }
 

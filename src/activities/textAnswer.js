@@ -13,12 +13,7 @@
 // }
 
 import { el } from '../engine/dom.js';
-
-const DEFAULT_IGNORE = /[.,!?'"\-\s]+/g;
-
-function normalize(value, ignore) {
-  return String(value).toLowerCase().replace(ignore ?? DEFAULT_IGNORE, ' ').trim();
-}
+import { normalizeAnswer as normalize } from './answerMatch.js';
 
 export default {
   type: 'text-answer',

@@ -17,6 +17,7 @@ import combinationLock from './combinationLock.js';
 import sequence from './sequence.js';
 import hiddenClue from './hiddenClue.js';
 import geoCheck from './geoCheck.js';
+import broken from './broken.js';
 
 const ACTIVITY_TYPES = [
   teamSetup,
@@ -30,6 +31,7 @@ const ACTIVITY_TYPES = [
   sequence,
   hiddenClue,
   geoCheck,
+  broken,
 ];
 
 const registry = new Map(ACTIVITY_TYPES.map((t) => [t.type, t]));

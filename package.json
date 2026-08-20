@@ -1,0 +1,12 @@
+{
+  "name": "classroom-escape-hub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static, dependency-free framework for collaborative classroom escape-room games.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test 'test/**/*.test.js'",
+    "check": "for f in $(find src server/src -name '*.js'); do node --check \"$f\" || exit 1; done && echo 'syntax OK'",
+    "serve": "python3 -m http.server 8000"
+  }
+}
