@@ -63,12 +63,21 @@ export default {
     let legend = null;
     if (cfg.showLegend !== false) {
       if (scheme === 'caesar') {
-        legend = el('div', { class: 'cipher-legend' }, `Caesar cipher — each letter is shifted by ${shift}. (A → ${caesar('A', shift)})`);
+        // Show how to DECODE (shift back), with concrete examples, since that's the student's task.
+        const ex1 = `${caesar('A', shift)} → A`;
+        const ex2 = `${caesar('E', shift)} → E`;
+        legend = el('div', { class: 'cipher-legend' }, [
+          el('p', {}, `🔑 How to crack it: every letter was moved ${shift} places forward in the alphabet. To read the message, move each letter ${shift} places back.`),
+          el('p', { class: 'cipher-example' }, `For example: ${ex1}, ${ex2}. Then type what the message really says.`),
+        ]);
       } else if (scheme === 'atbash') {
-        legend = el('div', { class: 'cipher-legend' }, 'Atbash cipher — the alphabet is reversed (A ↔ Z, B ↔ Y, …).');
+        legend = el('div', { class: 'cipher-legend' }, '🔑 How to crack it: the alphabet is flipped — swap each letter with its mirror (A ↔ Z, B ↔ Y, C ↔ X, …). Then type the real message.');
       } else if (scheme === 'symbol') {
-        legend = el('div', { class: 'cipher-legend cipher-symbol-legend' },
-          A.split('').map((letter, i) => el('span', { class: 'legend-pair' }, `${SYMBOLS[i]}=${letter}`)));
+        legend = el('div', { class: 'cipher-legend' }, [
+          el('p', {}, '🔑 How to crack it: use the key below to swap each symbol for its letter, then type the word.'),
+          el('div', { class: 'cipher-symbol-legend' },
+            A.split('').map((letter, i) => el('span', { class: 'legend-pair' }, `${SYMBOLS[i]}=${letter}`))),
+        ]);
       }
     }
 

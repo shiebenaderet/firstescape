@@ -24,6 +24,12 @@
   --green: #1f9d57;
   --red: #d8422f;
 
+  /* Warm "quest" accents (from the cozy quest-board direction) */
+  --amber: #c97a1b;
+  --brass: #b5852a;
+  --parchment: #fdf3dc;
+  --parchment-edge: #e6c88f;
+
   --focus: #1f6feb;
 
   --radius: 22px;
@@ -51,8 +57,9 @@ body {
   min-height: 100vh;
   line-height: 1.55;
   background:
+    radial-gradient(rgba(150, 110, 60, 0.05) 1px, transparent 1.4px) 0 0 / 20px 20px,
     radial-gradient(1200px 600px at 15% -10%, var(--bg-tint), transparent 60%),
-    radial-gradient(1000px 500px at 100% 0%, #ffe9f0, transparent 55%),
+    radial-gradient(1000px 520px at 100% 0%, #ffe6cf, transparent 55%),
     var(--bg);
   background-attachment: fixed;
 }
@@ -151,7 +158,9 @@ button { font-family: inherit; }
 .tag { font-size: 0.76rem; color: var(--ink-soft); background: #f4ead9; border-radius: var(--pill); padding: 2px 10px; }
 .escape-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; }
 .activity-count { font-size: 0.82rem; color: var(--ink-soft); }
-.escape-teacher { margin-top: 6px; border-top: 2px dashed var(--line); padding-top: 8px; }
+.escape-teacher { margin-top: 8px; border-top: 2px dashed var(--parchment-edge); padding-top: 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.teacher-label { font-size: 0.76rem; font-weight: 800; color: var(--amber); text-transform: uppercase; letter-spacing: 0.04em; }
+.dot-sep { color: var(--line); }
 .link-btn { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 0.86rem; font-weight: 700; padding: 4px 2px; }
 .link-btn:hover { text-decoration: underline; }
 .hub-footer { text-align: center; margin-top: 28px; color: var(--ink-soft); font-size: 0.9rem; }
@@ -174,7 +183,7 @@ button { font-family: inherit; }
 .runner-eyebrow { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); font-weight: 700; }
 .runner-title { margin: 2px 0 0; font-size: 1.3rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .runner-meta { display: flex; align-items: center; gap: 10px; }
-.timer { font-variant-numeric: tabular-nums; font-weight: 700; font-family: var(--font-display); background: var(--bg-tint); color: var(--ink); padding: 7px 13px; border-radius: var(--pill); }
+.timer { font-variant-numeric: tabular-nums; font-weight: 700; font-family: var(--font-display); background: #fdeccb; color: #7a4e12; border: 1px solid var(--parchment-edge); padding: 6px 13px; border-radius: var(--pill); }
 .progress-track { margin-top: 14px; height: 12px; background: #f0e5d4; border-radius: var(--pill); overflow: hidden; }
 .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--sun), var(--coral)); border-radius: var(--pill); transition: width 0.5s ease; }
 .step-label-top { display: inline-block; margin-top: 8px; font-size: 0.84rem; color: var(--ink-soft); font-weight: 700; }
@@ -190,12 +199,14 @@ button { font-family: inherit; }
 .puzzle-eyebrow { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); font-weight: 700; }
 .puzzle-title { color: var(--ink); font-size: 1.5rem; margin: 6px 0 14px; }
 .puzzle-story {
-  background: var(--bg-tint);
-  border-left: 5px solid var(--sun-deep);
+  background: var(--parchment);
+  border: 1px solid var(--parchment-edge);
+  border-left: 5px solid var(--amber);
   padding: 14px 16px;
   border-radius: var(--radius-sm);
   margin-bottom: 18px;
-  color: var(--ink);
+  color: #4a3d2a;
+  font-size: 1.04rem;
 }
 .prompt { font-size: 1.08rem; font-weight: 700; }
 .step-label { margin: 14px 0 4px; }
@@ -260,18 +271,21 @@ select.field { cursor: pointer; }
 /* ---------------- Cipher ---------------- */
 .cipher-text {
   font-family: 'DejaVu Sans Mono', ui-monospace, monospace;
-  font-size: 1.8rem;
-  letter-spacing: 6px;
+  font-size: 1.9rem;
+  letter-spacing: 7px;
   text-align: center;
-  background: #fff3d6;
-  padding: 16px;
+  background: var(--parchment);
+  padding: 18px;
   border-radius: var(--radius-sm);
   margin: 10px 0;
-  color: var(--coral-strong);
+  color: #8a3a2c;
   word-break: break-word;
-  border: 2px dashed var(--sun-deep);
+  border: 2px dashed var(--brass);
+  box-shadow: inset 0 0 24px rgba(150, 110, 60, 0.08);
 }
-.cipher-legend { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 6px; }
+.cipher-legend { font-size: 0.95rem; color: #5a4a30; margin: 8px 0; background: #fff8ea; border: 1px solid var(--parchment-edge); border-radius: var(--radius-sm); padding: 10px 14px; }
+.cipher-legend p { margin: 4px 0; }
+.cipher-example { font-family: 'DejaVu Sans Mono', ui-monospace, monospace; color: var(--amber); font-weight: 700; }
 .cipher-symbol-legend { display: flex; flex-wrap: wrap; gap: 6px; }
 .legend-pair { background: var(--bg-tint); border-radius: 6px; padding: 2px 6px; font-size: 0.85rem; }
 

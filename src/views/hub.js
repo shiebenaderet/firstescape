@@ -18,6 +18,25 @@ const MASCOT_SVG = `
   </g>
 </svg>`;
 
+/** Build a shareable direct link to a specific escape (works on any host / custom domain). */
+export function gameLinkFor(escapeId) {
+  return `${location.origin}${location.pathname}#/escape/${encodeURIComponent(escapeId)}`;
+}
+
+function copyGameLink(escapeId, btn) {
+  const url = gameLinkFor(escapeId);
+  const done = (msg) => {
+    const original = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(() => { btn.textContent = original; }, 2200);
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => done('✅ Link copied!')).catch(() => window.prompt('Copy this game link:', url));
+  } else {
+    window.prompt('Copy this game link:', url);
+  }
+}
+
 export function renderHub(root, escapes, { onLaunch, onResults }) {
   const cards = escapes.map((escape) => {
     const inProgress = loadProgress(escape.id);
@@ -47,6 +66,13 @@ export function renderHub(root, escapes, { onLaunch, onResults }) {
         el('span', { class: 'activity-count' }, `${(escape.activities || []).length} challenges`),
       ]),
       el('div', { class: 'escape-teacher' }, [
+        el('span', { class: 'teacher-label' }, '👩‍🏫 Teacher'),
+        el('button', {
+          class: 'link-btn',
+          title: 'Copy a direct link to this game to share with your class',
+          on: { click: (e) => copyGameLink(escape.id, e.currentTarget) },
+        }, '🔗 Copy game link'),
+        el('span', { class: 'dot-sep' }, '·'),
         el('button', {
           class: 'link-btn',
           on: { click: () => onResults(escape.id) },

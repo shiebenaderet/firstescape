@@ -218,7 +218,7 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
     );
     clear(stage);
     stage.appendChild(el('div', { class: 'board-intro' },
-      'Split up! Any team member can work any unsolved puzzle. Solve them all to escape.'));
+      'These puzzles can be solved in any order. Solve them all to escape.'));
     stage.appendChild(board);
   }
 
