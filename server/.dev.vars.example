@@ -1,0 +1,4 @@
+# Copy to `.dev.vars` for local development (git-ignored). In production these are
+# set with `wrangler secret put TEACHER_PASSWORD` and `wrangler secret put AUTH_SECRET`.
+TEACHER_PASSWORD=choose-a-teacher-passphrase
+AUTH_SECRET=a-long-random-string

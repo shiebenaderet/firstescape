@@ -1,0 +1,28 @@
+{
+  // Cloudflare Worker API for the Classroom Escape Hub.
+  // Secrets (TEACHER_PASSWORD, AUTH_SECRET) are NOT stored here — set them with
+  //   wrangler secret put TEACHER_PASSWORD
+  //   wrangler secret put AUTH_SECRET
+  // and, for local dev, in server/.dev.vars (git-ignored).
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "escape-hub-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-01",
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+
+  // Non-secret settings. ALLOWED_ORIGINS is a comma-separated allow-list for CORS.
+  "vars": {
+    "ALLOWED_ORIGINS": "https://escape.mrbsocialstudies.org,http://localhost:8000,http://127.0.0.1:8000"
+  },
+
+  // D1 database binding. database_id is filled in after `wrangler d1 create escape_hub`.
+  // (Local dev with --local does not require a real id.)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "escape_hub",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
