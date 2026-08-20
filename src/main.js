@@ -4,13 +4,13 @@
 //   #/results/<escapeId>  -> quick per-escape results (local device)
 //   #/teacher             -> teacher dashboard (login → results + escape builder)
 
-import { listEscapes, getEscape, getBank, registerCustomEscapes } from './content/index.js';
+import { listVisibleEscapes, getEscape, getBank, registerCustomEscapes, setHiddenEscapes } from './content/index.js';
 import { renderHub } from './views/hub.js';
 import { renderResults } from './views/results.js';
 import { renderTeacher } from './views/teacher/index.js';
 import { startEscape } from './engine/engine.js';
 import { applyPrefs } from './engine/prefs.js';
-import { fetchPublishedEscapes, apiEnabled } from './engine/apiClient.js';
+import { fetchPublishedEscapes, fetchVisibility, apiEnabled } from './engine/apiClient.js';
 import { el, clear } from './engine/dom.js';
 
 const root = document.getElementById('app');
@@ -46,9 +46,8 @@ function render() {
     return;
   }
 
-  renderHub(root, listEscapes(), {
+  renderHub(root, listVisibleEscapes(), {
     onLaunch: (id) => go(`#/escape/${encodeURIComponent(id)}`),
-    onResults: (id) => go(`#/results/${encodeURIComponent(id)}`),
     onTeacher: () => go('#/teacher'),
   });
 }
@@ -66,8 +65,9 @@ function renderNotFound() {
 async function loadCustomEscapes() {
   if (!apiEnabled()) return;
   try {
-    const list = await fetchPublishedEscapes();
+    const [list, hidden] = await Promise.all([fetchPublishedEscapes(), fetchVisibility()]);
     registerCustomEscapes(list.map((e) => e.definition).filter(Boolean));
+    setHiddenEscapes(hidden);
   } catch {
     /* offline / API down: just show built-in escapes */
   }

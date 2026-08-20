@@ -15,6 +15,7 @@ import { cipherLab } from './escapes/cipherLab.js';
 const BUILTIN_ESCAPES = [gettingToKnowYou, cipherLab, quickMixer];
 
 let customEscapes = [];
+let hiddenIds = new Set();
 
 /** Merge in custom escapes (from the API). Each is a full escape object with a unique id. */
 export function registerCustomEscapes(list) {
@@ -24,8 +25,26 @@ export function registerCustomEscapes(list) {
     .map((e) => ({ ...e, custom: true }));
 }
 
+/** Built-in room ids the teacher has hidden from the student hub. */
+export function setHiddenEscapes(list) {
+  hiddenIds = new Set(list || []);
+}
+export function getHiddenEscapes() {
+  return [...hiddenIds];
+}
+
+export function getBuiltinEscapes() {
+  return BUILTIN_ESCAPES;
+}
+
 export function listEscapes() {
   return [...BUILTIN_ESCAPES, ...customEscapes];
+}
+
+/** Escapes shown to students: everything except hidden built-ins. (Custom escapes are
+ *  already filtered server-side to only the published ones.) */
+export function listVisibleEscapes() {
+  return listEscapes().filter((e) => !hiddenIds.has(e.id));
 }
 
 export function getEscape(id) {

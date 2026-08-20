@@ -3,9 +3,11 @@
 // forms, see a LIVE preview rendered by the real game engine, and publish — no code.
 
 import { el, clear, mount } from '../../engine/dom.js';
-import { fetchAdminEscapes, saveEscape, deleteEscape } from '../../engine/apiClient.js';
+import { fetchAdminEscapes, saveEscape, deleteEscape, fetchVisibility, setVisibility } from '../../engine/apiClient.js';
 import { ACTIVITY_SCHEMAS, getSchema } from '../../activities/schemas.js';
 import { getActivityType } from '../../activities/index.js';
+import { getBuiltinEscapes } from '../../content/index.js';
+import { gameLinkFor } from '../hub.js';
 
 const EMOJIS = ['🚪', '🧪', '🗝️', '🔐', '🧩', '🔎', '🗺️', '⚡', '🎯', '🏆', '🚀', '🕵️', '📚', '🔬', '🎨', '🎵', '🌟', '🧠', '⏳', '🎲'];
 
@@ -18,12 +20,69 @@ export function renderBuilder(host, { onPublished } = {}) {
   renderList(host, { onPublished });
 }
 
+function copyLink(id, btn) {
+  const url = gameLinkFor(id);
+  const done = (msg) => {
+    const original = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(() => { btn.textContent = original; }, 1800);
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => done('Copied!')).catch(() => window.prompt('Copy this game link:', url));
+  } else {
+    window.prompt('Copy this game link:', url);
+  }
+}
+
+function visToggle(checked, onChange) {
+  const input = el('input', { type: 'checkbox', class: 'vis-input', checked });
+  const label = el('span', { class: 'vis-label' }, checked ? 'Visible' : 'Hidden');
+  input.addEventListener('change', () => {
+    label.textContent = input.checked ? 'Visible' : 'Hidden';
+    onChange(input.checked);
+  });
+  return el('label', { class: 'vis-toggle', title: 'Show or hide this room on the student hub' }, [
+    input,
+    el('span', { class: 'vis-track' }),
+    label,
+  ]);
+}
+
 /* ------------------------------- list view ------------------------------ */
 function renderList(host, { onPublished }) {
-  mount(host, el('div', { class: 'dash-loading' }, 'Loading your escapes…'));
-  fetchAdminEscapes()
-    .then((escapes) => {
-      const cards = escapes.map((e) =>
+  mount(host, el('div', { class: 'dash-loading' }, 'Loading your rooms…'));
+  Promise.all([fetchAdminEscapes(), fetchVisibility()])
+    .then(([custom, hidden]) => {
+      let hiddenIds = new Set(hidden || []);
+
+      async function persistHidden() {
+        await setVisibility([...hiddenIds]);
+        if (onPublished) onPublished();
+      }
+
+      const builtinCards = getBuiltinEscapes().map((e) => {
+        const visible = !hiddenIds.has(e.id);
+        return el('div', { class: 'builder-card' }, [
+          el('div', { class: 'builder-card-icon' }, e.icon || '🚪'),
+          el('div', { class: 'builder-card-body' }, [
+            el('div', { class: 'builder-card-title' }, e.title),
+            el('div', { class: 'builder-card-meta' }, [
+              el('span', { class: 'pill pill-built' }, 'Built-in'),
+              el('span', {}, `${(e.activities || []).length} challenges`),
+            ]),
+          ]),
+          el('div', { class: 'builder-card-actions' }, [
+            visToggle(visible, (on) => {
+              if (on) hiddenIds.delete(e.id);
+              else hiddenIds.add(e.id);
+              persistHidden().catch((err) => alert(err.message));
+            }),
+            el('button', { class: 'btn btn-ghost', on: { click: (ev) => copyLink(e.id, ev.currentTarget) } }, 'Copy link'),
+          ]),
+        ]);
+      });
+
+      const customCards = custom.map((e) =>
         el('div', { class: 'builder-card' }, [
           el('div', { class: 'builder-card-icon' }, (e.definition && e.definition.icon) || '🚪'),
           el('div', { class: 'builder-card-body' }, [
@@ -34,6 +93,12 @@ function renderList(host, { onPublished }) {
             ]),
           ]),
           el('div', { class: 'builder-card-actions' }, [
+            visToggle(!!e.published, (on) => {
+              saveEscape(e.id, { title: e.title, definition: e.definition, published: on })
+                .then(() => { if (onPublished) onPublished(); })
+                .catch((err) => alert(err.message));
+            }),
+            el('button', { class: 'btn btn-ghost', on: { click: (ev) => copyLink(e.id, ev.currentTarget) } }, 'Copy link'),
             el('button', { class: 'btn btn-primary', on: { click: () => openEditor(host, e.definition, { onPublished, isNew: false }) } }, 'Edit'),
             el('button', { class: 'btn btn-ghost danger', on: { click: () => remove(e.id) } }, 'Delete'),
           ]),
@@ -47,15 +112,20 @@ function renderList(host, { onPublished }) {
 
       mount(host, el('div', { class: 'dash-panel' }, [
         el('div', { class: 'builder-list-head' }, [
-          el('h2', {}, 'Your escape rooms'),
+          el('h2', {}, 'Rooms'),
           el('button', { class: 'btn btn-primary', on: { click: () => openEditor(host, newEscape(), { onPublished, isNew: true }) } }, '＋ New escape'),
         ]),
-        el('p', { class: 'muted' }, 'Build and publish rooms here — published rooms appear on the student hub automatically.'),
-        cards.length ? el('div', { class: 'builder-list' }, cards) : el('p', { class: 'results-empty' }, 'No custom escapes yet. Click “New escape” to build your first one!'),
+        el('p', { class: 'muted' }, 'Toggle which rooms students see on the hub. Hidden rooms stay off the hub (direct links still work).'),
+        el('h3', { class: 'builder-section-title' }, 'Built-in rooms'),
+        el('div', { class: 'builder-list' }, builtinCards),
+        el('h3', { class: 'builder-section-title' }, 'Your rooms'),
+        customCards.length
+          ? el('div', { class: 'builder-list' }, customCards)
+          : el('p', { class: 'results-empty' }, 'No custom rooms yet. Click “New escape” to build one.'),
       ]));
     })
     .catch((err) => mount(host, el('div', { class: 'dash-error' }, [
-      el('p', {}, `Couldn't load escapes: ${err.message}`),
+      el('p', {}, `Couldn't load rooms: ${err.message}`),
       el('button', { class: 'btn btn-ghost', on: { click: () => renderList(host, { onPublished }) } }, 'Retry'),
     ])));
 }
@@ -119,7 +189,7 @@ function openEditor(host, source, { onPublished, isNew }) {
       textField('Title', escape.title, (v) => { escape.title = v; if (isNew && !escape._idEdited) escape.id = slugify(v); }),
       el('div', { class: 'field-row' }, [
         el('label', { class: 'field-label' }, 'Icon'),
-        emojiPicker(escape.icon, (v) => { escape.icon = v; renderEditor(); }),
+        emojiPicker(escape.icon, (v) => { escape.icon = v; }),
       ]),
       numberField('Estimated minutes', escape.estimatedMinutes, (v) => { escape.estimatedMinutes = v; }),
       textField('Grade band (optional)', escape.gradeBand, (v) => { escape.gradeBand = v; }),
@@ -216,7 +286,7 @@ function openEditor(host, source, { onPublished, isNew }) {
     const fields = [
       el('div', { class: 'field-row' }, [
         el('label', { class: 'field-label' }, 'Icon'),
-        emojiPicker(a.icon, (v) => { a.icon = v; renderEditor(); }),
+        emojiPicker(a.icon, (v) => { a.icon = v; refreshPreview(a); }),
       ]),
       textField('Challenge title', a.title, (v) => { a.title = v; refreshPreviewTitle(); }),
       textareaField('Story / setup (optional)', a.story, (v) => { a.story = v; }),
@@ -386,7 +456,17 @@ function optionsField(cfg, rerender, refresh) {
 function emojiPicker(current, onPick) {
   const btn = el('button', { class: 'emoji-current', type: 'button' }, current || '🚪');
   const grid = el('div', { class: 'emoji-grid', hidden: true }, EMOJIS.map((e) =>
-    el('button', { class: 'emoji-opt', type: 'button', on: { click: () => { onPick(e); } } }, e)
+    el('button', {
+      class: 'emoji-opt',
+      type: 'button',
+      on: {
+        click: () => {
+          btn.textContent = e;       // reflect the choice immediately
+          grid.hidden = true;        // close the popup (the reported bug)
+          onPick(e);                 // update the model
+        },
+      },
+    }, e)
   ));
   btn.addEventListener('click', () => { grid.hidden = !grid.hidden; });
   return el('div', { class: 'emoji-picker' }, [btn, grid]);

@@ -3,7 +3,6 @@
 
 import { el, clear } from '../engine/dom.js';
 import { loadProgress } from '../engine/storage.js';
-import { loadCompletions } from '../engine/results.js';
 import { isLargeText, toggleLargeText } from '../engine/prefs.js';
 
 const MASCOT_SVG = `
@@ -23,60 +22,28 @@ export function gameLinkFor(escapeId) {
   return `${location.origin}${location.pathname}#/escape/${encodeURIComponent(escapeId)}`;
 }
 
-function copyGameLink(escapeId, btn) {
-  const url = gameLinkFor(escapeId);
-  const done = (msg) => {
-    const original = btn.textContent;
-    btn.textContent = msg;
-    setTimeout(() => { btn.textContent = original; }, 2200);
-  };
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(url).then(() => done('✅ Link copied!')).catch(() => window.prompt('Copy this game link:', url));
-  } else {
-    window.prompt('Copy this game link:', url);
-  }
-}
-
-export function renderHub(root, escapes, { onLaunch, onResults, onTeacher }) {
+export function renderHub(root, escapes, { onLaunch, onTeacher }) {
   const cards = escapes.map((escape) => {
     const inProgress = loadProgress(escape.id);
     const started = inProgress && inProgress.index > 0 && inProgress.index < (escape.activities || []).length;
-    const completions = loadCompletions(escape.id).length;
-    const structure = escape.structure === 'non-linear' ? 'Non-linear' : 'Linear';
+    const count = (escape.activities || []).length;
 
     return el('article', { class: 'escape-card' }, [
       el('div', { class: 'escape-card-top' }, [
         el('span', { class: 'escape-icon' }, escape.icon || '🚪'),
-        el('div', { class: 'escape-badges' }, [
-          el('span', { class: 'badge badge-time' }, `⏱ ~${escape.estimatedMinutes || '?'} min`),
-          el('span', { class: `badge badge-structure ${escape.structure === 'non-linear' ? 'nonlinear' : ''}` }, structure),
-          escape.gradeBand ? el('span', { class: 'badge' }, escape.gradeBand) : null,
-        ]),
+        el('span', { class: 'escape-time' }, `~${escape.estimatedMinutes || '?'} min`),
       ]),
       el('h2', { class: 'escape-title' }, escape.title),
-      escape.subtitle ? el('p', { class: 'escape-subtitle' }, escape.subtitle) : null,
-      escape.format ? el('p', { class: 'escape-format' }, escape.format) : null,
-      el('p', { class: 'escape-summary' }, escape.summary || ''),
-      el('div', { class: 'escape-tags' }, (escape.tags || []).map((t) => el('span', { class: 'tag' }, `#${t}`))),
+      el('p', { class: 'escape-summary' }, escape.summary || escape.subtitle || ''),
       el('div', { class: 'escape-actions' }, [
         el('button', {
           class: 'btn btn-primary',
           on: { click: () => onLaunch(escape.id) },
-        }, started ? 'Resume escape →' : 'Start escape →'),
-        el('span', { class: 'activity-count' }, `${(escape.activities || []).length} challenges`),
-      ]),
-      el('div', { class: 'escape-teacher' }, [
-        el('span', { class: 'teacher-label' }, '👩‍🏫 Teacher'),
-        el('button', {
-          class: 'link-btn',
-          title: 'Copy a direct link to this game to share with your class',
-          on: { click: (e) => copyGameLink(escape.id, e.currentTarget) },
-        }, '🔗 Copy game link'),
-        el('span', { class: 'dot-sep' }, '·'),
-        el('button', {
-          class: 'link-btn',
-          on: { click: () => onResults(escape.id) },
-        }, `📊 Results${completions ? ` (${completions})` : ''}`),
+        }, started ? 'Resume →' : 'Start →'),
+        el('span', { class: 'escape-meta' }, [
+          count ? `${count} challenge${count === 1 ? '' : 's'}` : '',
+          escape.gradeBand ? ` · ${escape.gradeBand}` : '',
+        ].join('')),
       ]),
     ]);
   });
@@ -107,10 +74,14 @@ export function renderHub(root, escapes, { onLaunch, onResults, onTeacher }) {
         onTeacher ? el('button', { class: 'btn btn-ghost', on: { click: onTeacher } }, '👩‍🏫 Teacher') : null,
       ]),
     ]),
-    el('div', { class: 'hub-grid' }, cards),
-    el('footer', { class: 'hub-footer' }, [
-      el('p', {}, `${escapes.length} escape${escapes.length === 1 ? '' : 's'} ready to play · new ones added through the year`),
-    ]),
+    escapes.length
+      ? el('div', { class: 'hub-grid' }, cards)
+      : el('p', { class: 'hub-empty' }, 'No escape rooms are open right now — check back soon!'),
+    escapes.length
+      ? el('footer', { class: 'hub-footer' }, [
+          el('p', {}, `${escapes.length} escape${escapes.length === 1 ? '' : 's'} ready to play · new ones added through the year`),
+        ])
+      : null,
   ]);
 
   clear(root);

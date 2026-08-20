@@ -137,33 +137,15 @@ button { font-family: inherit; }
 .escape-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
 .escape-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .escape-icon { font-size: 2.4rem; line-height: 1; }
-.escape-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
-.badge {
-  background: var(--bg-tint);
-  color: var(--ink);
-  border-radius: var(--pill);
-  padding: 4px 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  border: 2px solid transparent;
-}
-.badge-time { background: #ffe7c2; }
-.badge-structure { background: #cdeee9; }
-.badge-structure.nonlinear { background: #e7ddfa; }
-.escape-title { margin: 6px 0 0; color: var(--ink); font-size: 1.4rem; }
-.escape-subtitle { margin: 0; color: var(--ink-soft); font-weight: 700; font-size: 0.95rem; }
-.escape-format { margin: 0; font-size: 0.85rem; color: var(--teal); font-weight: 700; }
-.escape-summary { margin: 6px 0; color: var(--ink-soft); }
-.escape-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { font-size: 0.76rem; color: var(--ink-soft); background: #f4ead9; border-radius: var(--pill); padding: 2px 10px; }
+.escape-time { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); background: #ffe7c2; border-radius: var(--pill); padding: 4px 12px; }
+.escape-title { margin: 8px 0 0; color: var(--ink); font-size: 1.35rem; }
+.escape-summary { margin: 8px 0 12px; color: var(--ink-soft); flex: 1; }
 .escape-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; }
-.activity-count { font-size: 0.82rem; color: var(--ink-soft); }
-.escape-teacher { margin-top: 8px; border-top: 2px dashed var(--parchment-edge); padding-top: 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-.teacher-label { font-size: 0.76rem; font-weight: 800; color: var(--amber); text-transform: uppercase; letter-spacing: 0.04em; }
-.dot-sep { color: var(--line); }
+.escape-meta { font-size: 0.82rem; color: var(--ink-soft); }
+.hub-empty { text-align: center; color: var(--ink-soft); padding: 40px 16px; }
+.hub-footer { text-align: center; margin-top: 28px; color: var(--ink-soft); font-size: 0.9rem; }
 .link-btn { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 0.86rem; font-weight: 700; padding: 4px 2px; }
 .link-btn:hover { text-decoration: underline; }
-.hub-footer { text-align: center; margin-top: 28px; color: var(--ink-soft); font-size: 0.9rem; }
 
 /* ---------------- Runner ---------------- */
 .runner { max-width: 820px; margin: 0 auto; }
@@ -400,8 +382,17 @@ select.field { cursor: pointer; }
 .pill { border-radius: var(--pill); padding: 2px 10px; font-weight: 700; font-size: 0.72rem; }
 .pill-on { background: #dff5e6; color: #12633a; }
 .pill-off { background: #fde9d2; color: #8a5a12; }
-.builder-card-actions { display: flex; flex-direction: column; gap: 6px; }
+.pill-built { background: #e4eefc; color: #2d5aa0; }
+.builder-card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 .builder-card-actions .btn { padding: 8px 14px; font-size: 0.85rem; }
+
+.vis-toggle { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 0.85rem; color: var(--ink-soft); user-select: none; }
+.vis-input { position: absolute; opacity: 0; width: 0; height: 0; }
+.vis-track { width: 40px; height: 22px; background: #d8cfc0; border-radius: 999px; position: relative; flex: none; transition: background 0.15s ease; }
+.vis-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.15s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.vis-input:checked + .vis-track { background: var(--green); }
+.vis-input:checked + .vis-track::after { transform: translateX(18px); }
+.vis-input:focus-visible + .vis-track { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* Builder editor: two columns */
 .builder-editor { display: grid; grid-template-columns: minmax(300px, 420px) 1fr; gap: 20px; align-items: start; }

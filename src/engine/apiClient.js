@@ -58,6 +58,12 @@ async function request(path, { method = 'GET', body, auth = false } = {}) {
 export function fetchPublishedEscapes() {
   return request('/api/escapes').then((d) => (d && d.escapes) || []);
 }
+export function fetchVisibility() {
+  return request('/api/visibility').then((d) => (d && d.hidden) || []);
+}
+export function setVisibility(hidden) {
+  return request('/api/admin/visibility', { method: 'PUT', body: { hidden }, auth: true });
+}
 export function submitResult(escapeId, record) {
   return request('/api/results', { method: 'POST', body: { escapeId, record } });
 }

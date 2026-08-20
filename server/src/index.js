@@ -135,6 +135,12 @@ export default {
         return json({ ok: true, service: 'escape-hub-api' }, 200, request, env);
       }
 
+      // ---- Public: which built-in rooms are hidden from the hub ----
+      if (pathname === '/api/visibility' && method === 'GET') {
+        const hidden = await getHiddenEscapes(env);
+        return json({ hidden }, 200, request, env);
+      }
+
       // ---- Public: list published custom escapes ----
       if (pathname === '/api/escapes' && method === 'GET') {
         const { results } = await env.DB.prepare(
@@ -203,6 +209,14 @@ export default {
           return json({ ok: true }, 200, request, env);
         }
 
+        // Visibility of built-in rooms
+        if (pathname === '/api/admin/visibility' && method === 'PUT') {
+          const body = await readJson(request);
+          const hidden = Array.isArray(body && body.hidden) ? body.hidden.map((x) => String(x).slice(0, 128)) : [];
+          await setSetting(env, 'hidden_escapes', JSON.stringify(hidden));
+          return json({ ok: true, hidden }, 200, request, env);
+        }
+
         // Escapes
         if (pathname === '/api/admin/escapes' && method === 'GET') {
           const { results } = await env.DB.prepare('SELECT id, title, definition, published, updated_at FROM escapes ORDER BY updated_at DESC').all();
@@ -241,6 +255,22 @@ export default {
     }
   },
 };
+
+/* ------------------------------ settings -------------------------------- */
+async function getSetting(env, key) {
+  const row = await env.DB.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first();
+  return row ? row.value : null;
+}
+async function setSetting(env, key, value) {
+  await env.DB.prepare(
+    `INSERT INTO settings (key, value) VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`
+  ).bind(key, value).run();
+}
+async function getHiddenEscapes(env) {
+  const raw = await getSetting(env, 'hidden_escapes');
+  return raw ? safeParse(raw) || [] : [];
+}
 
 /* ------------------------------ small utils ----------------------------- */
 function str(v) {
