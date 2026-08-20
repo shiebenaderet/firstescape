@@ -21,7 +21,7 @@
     {
       "binding": "DB",
       "database_name": "escape_hub",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "1a00f537-2f3b-4700-a953-a79ec3837a7b",
       "migrations_dir": "migrations"
     }
   ]
