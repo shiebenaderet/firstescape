@@ -358,6 +358,112 @@ select.field { cursor: pointer; }
 .sink-note.ok { background: #dff5e6; color: #12633a; }
 .sink-note.fail { background: #fde4e0; color: #9a2c1e; }
 
+/* ================= Teacher dashboard ================= */
+.muted { color: var(--ink-soft); }
+.dash-loading, .dash-error { padding: 40px; text-align: center; color: var(--ink-soft); }
+
+.teacher-login { max-width: 420px; margin: 8vh auto 0; }
+.login-card { background: var(--surface); border: 3px solid var(--line); border-top: 8px solid var(--coral); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow-lg); text-align: center; }
+.login-badge { font-size: 3rem; }
+.login-card h1 { margin: 6px 0; }
+.login-sub { color: var(--ink-soft); margin: 0 0 14px; }
+.login-card .btn-primary { width: 100%; margin: 8px 0; }
+.login-card .link-btn { display: inline-block; margin-top: 8px; }
+
+.dashboard { max-width: 1120px; margin: 0 auto; }
+.dash-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 3px solid var(--line); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+.dash-brand { display: flex; align-items: center; gap: 14px; }
+.dash-logo { font-size: 2.4rem; }
+.dash-title { margin: 0; font-size: 1.5rem; }
+.dash-sub { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.9rem; }
+.dash-actions { display: flex; gap: 8px; }
+.dash-tabs { display: flex; gap: 8px; margin: 16px 0; }
+.dash-tab { background: var(--surface); border: 2px solid var(--line); border-radius: var(--pill); padding: 10px 20px; font-family: var(--font-display); font-weight: 700; color: var(--ink-soft); cursor: pointer; }
+.dash-tab.active { background: var(--coral); color: #fff; border-color: var(--coral); }
+.dash-panel { background: var(--surface); border: 3px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+
+.stat-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-tile { background: var(--bg-tint); border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
+.stat-icon { font-size: 1.5rem; }
+.stat-value { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; color: var(--ink); }
+.stat-label { font-size: 0.8rem; color: var(--ink-soft); }
+.toolbar-label { font-weight: 700; color: var(--ink-soft); }
+
+/* Builder list */
+.builder-list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.builder-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 12px; }
+.builder-card { display: flex; gap: 12px; align-items: center; background: var(--bg-tint); border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 14px; }
+.builder-card-icon { font-size: 2rem; }
+.builder-card-body { flex: 1; min-width: 0; }
+.builder-card-title { font-weight: 800; font-family: var(--font-display); }
+.builder-card-meta { display: flex; gap: 8px; align-items: center; font-size: 0.8rem; color: var(--ink-soft); margin-top: 4px; }
+.pill { border-radius: var(--pill); padding: 2px 10px; font-weight: 700; font-size: 0.72rem; }
+.pill-on { background: #dff5e6; color: #12633a; }
+.pill-off { background: #fde9d2; color: #8a5a12; }
+.builder-card-actions { display: flex; flex-direction: column; gap: 6px; }
+.builder-card-actions .btn { padding: 8px 14px; font-size: 0.85rem; }
+
+/* Builder editor: two columns */
+.builder-editor { display: grid; grid-template-columns: minmax(300px, 420px) 1fr; gap: 20px; align-items: start; }
+.builder-left, .builder-right { background: var(--surface); border: 3px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+.builder-h2 { margin: 8px 0 12px; }
+.builder-section-title { font-family: var(--font-display); font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.8rem; margin: 18px 0 8px; border-top: 2px dashed var(--parchment-edge); padding-top: 12px; }
+.form-grid { display: flex; flex-direction: column; gap: 4px; }
+.field-row { display: flex; flex-direction: column; margin: 4px 0; }
+.builder-save-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+.publish-toggle { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.builder-empty { color: var(--ink-soft); padding: 30px; text-align: center; }
+
+.challenge-list { display: flex; flex-direction: column; gap: 8px; }
+.challenge-row { display: flex; align-items: center; gap: 6px; background: var(--bg-tint); border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 6px 8px; }
+.challenge-row.active { border-color: var(--coral); background: #ffe9e4; }
+.challenge-main { flex: 1; display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; text-align: left; padding: 4px; min-width: 0; }
+.challenge-icon { font-size: 1.4rem; }
+.challenge-titles { display: flex; flex-direction: column; min-width: 0; }
+.challenge-title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.challenge-type { font-size: 0.75rem; color: var(--ink-soft); }
+.challenge-ctrls { display: flex; gap: 2px; }
+.icon-btn { width: 30px; height: 30px; border: 2px solid var(--line); background: var(--surface); border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--ink); }
+.icon-btn:hover:not(:disabled) { background: var(--bg-tint); }
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+.icon-btn.danger { color: var(--red); border-color: #f3c6be; }
+
+/* Palette */
+.palette-head { display: flex; align-items: center; justify-content: space-between; }
+.palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+.palette-tile { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; text-align: left; background: var(--bg-tint); border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 14px; cursor: pointer; transition: transform 0.12s ease, border-color 0.12s ease; }
+.palette-tile:hover { transform: translateY(-3px); border-color: var(--coral); }
+.palette-icon { font-size: 1.8rem; }
+.palette-label { font-family: var(--font-display); font-weight: 700; }
+.palette-desc { font-size: 0.8rem; color: var(--ink-soft); }
+
+.challenge-editor-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.challenge-editor-head h3 { margin: 0; }
+
+/* Live preview */
+.preview-pane { margin-top: 18px; border-top: 2px dashed var(--parchment-edge); padding-top: 14px; }
+.preview-tag { font-weight: 700; color: var(--teal); margin-bottom: 10px; }
+.preview-host .puzzle-card { border-left-color: var(--teal); }
+
+/* String list + options editors */
+.stringlist { display: flex; flex-direction: column; gap: 6px; }
+.stringlist-row { display: flex; gap: 6px; align-items: center; }
+.stringlist-row .field { margin: 0; }
+.options-editor { display: flex; flex-direction: column; gap: 6px; }
+.option-row { display: flex; gap: 8px; align-items: center; }
+.option-row .field { margin: 0; }
+
+/* Emoji picker */
+.emoji-picker { position: relative; display: inline-block; }
+.emoji-current { font-size: 1.6rem; width: 52px; height: 46px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
+.emoji-grid { position: absolute; z-index: 10; top: 52px; left: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 8px; box-shadow: var(--shadow-lg); }
+.emoji-opt { font-size: 1.4rem; width: 40px; height: 40px; border: none; background: none; cursor: pointer; border-radius: 8px; }
+.emoji-opt:hover { background: var(--bg-tint); }
+
+@media (max-width: 820px) {
+  .builder-editor { grid-template-columns: 1fr; }
+}
+
 .not-found { text-align: center; padding: 60px 20px; }
 
 .fade-in { animation: fadeIn 0.4s ease; }

@@ -1,13 +1,16 @@
 // App entry point + hash router.
-// Routes:
-//   #/                      -> hub (catalog of escapes)
-//   #/escape/<escapeId>     -> run a specific escape
+//   #/                    -> hub (catalog of escapes)
+//   #/escape/<escapeId>   -> run a specific escape
+//   #/results/<escapeId>  -> quick per-escape results (local device)
+//   #/teacher             -> teacher dashboard (login → results + escape builder)
 
-import { listEscapes, getEscape, getBank } from './content/index.js';
+import { listEscapes, getEscape, getBank, registerCustomEscapes } from './content/index.js';
 import { renderHub } from './views/hub.js';
 import { renderResults } from './views/results.js';
+import { renderTeacher } from './views/teacher/index.js';
 import { startEscape } from './engine/engine.js';
 import { applyPrefs } from './engine/prefs.js';
+import { fetchPublishedEscapes, apiEnabled } from './engine/apiClient.js';
 import { el, clear } from './engine/dom.js';
 
 const root = document.getElementById('app');
@@ -38,9 +41,15 @@ function render() {
     return;
   }
 
+  if (hash === '#/teacher' || hash.startsWith('#/teacher/')) {
+    renderTeacher(root, { onExit: () => go('#/'), onRefresh: loadCustomEscapes });
+    return;
+  }
+
   renderHub(root, listEscapes(), {
     onLaunch: (id) => go(`#/escape/${encodeURIComponent(id)}`),
     onResults: (id) => go(`#/results/${encodeURIComponent(id)}`),
+    onTeacher: () => go('#/teacher'),
   });
 }
 
@@ -54,5 +63,17 @@ function renderNotFound() {
   ]));
 }
 
+async function loadCustomEscapes() {
+  if (!apiEnabled()) return;
+  try {
+    const list = await fetchPublishedEscapes();
+    registerCustomEscapes(list.map((e) => e.definition).filter(Boolean));
+  } catch {
+    /* offline / API down: just show built-in escapes */
+  }
+}
+
 window.addEventListener('hashchange', render);
-render();
+
+// Load published custom escapes first (so the hub shows them), then render.
+loadCustomEscapes().finally(render);

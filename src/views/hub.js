@@ -37,7 +37,7 @@ function copyGameLink(escapeId, btn) {
   }
 }
 
-export function renderHub(root, escapes, { onLaunch, onResults }) {
+export function renderHub(root, escapes, { onLaunch, onResults, onTeacher }) {
   const cards = escapes.map((escape) => {
     const inProgress = loadProgress(escape.id);
     const started = inProgress && inProgress.index > 0 && inProgress.index < (escape.activities || []).length;
@@ -102,7 +102,10 @@ export function renderHub(root, escapes, { onLaunch, onResults }) {
           el('p', { class: 'hub-tagline' }, 'Grab your team, put your heads together, and escape the room — one puzzle at a time.'),
         ]),
       ]),
-      el('div', { class: 'settings' }, [textBtn]),
+      el('div', { class: 'settings' }, [
+        textBtn,
+        onTeacher ? el('button', { class: 'btn btn-ghost', on: { click: onTeacher } }, '👩‍🏫 Teacher') : null,
+      ]),
     ]),
     el('div', { class: 'hub-grid' }, cards),
     el('footer', { class: 'hub-footer' }, [

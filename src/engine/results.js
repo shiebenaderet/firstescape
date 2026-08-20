@@ -18,6 +18,7 @@
 // If an escape has no `results`, it defaults to saving locally.
 
 import { el } from './dom.js';
+import { API_BASE } from '../config.js';
 
 const RESULTS_PREFIX = 'escape-hub:v1:results:';
 
@@ -121,6 +122,21 @@ const SINKS = {
     return saveCompletion(escape.id, record);
   },
 
+  // Central collection via the Escape Hub Worker API (results from every device land in D1).
+  api(record, escape) {
+    if (!API_BASE) return false;
+    try {
+      fetch(`${API_BASE}/api/results`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ escapeId: escape.id, record }),
+      }).catch(() => {});
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
   webhook(record, escape) {
     const url = escape.results?.webhook?.url;
     if (!url) return false;
@@ -172,7 +188,10 @@ const SINKS = {
 export function recordResults(escape, state, meta) {
   const cfg = escape.results || {};
   const record = cfg.buildRecord ? cfg.buildRecord(state, meta) : buildDefaultRecord(escape, state, meta);
-  const sinks = cfg.sinks && cfg.sinks.length ? cfg.sinks : ['local'];
+  const sinks = cfg.sinks && cfg.sinks.length ? [...cfg.sinks] : ['local'];
+  // Centralize to the backend by default (so a teacher sees results from every device),
+  // unless the escape explicitly opts out with `results.central: false`.
+  if (API_BASE && cfg.central !== false && !sinks.includes('api')) sinks.push('api');
 
   const sinkResults = sinks.map((sink) => {
     const fn = SINKS[sink];
