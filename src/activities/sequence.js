@@ -63,6 +63,7 @@ export default {
     const pads = (cfg.pads || []).map((pad) =>
       el('button', {
         class: 'seq-pad',
+        'aria-label': `Play ${pad.label}`,
         style: pad.color ? { background: pad.color } : null,
         on: { click: () => press(pad) },
       }, pad.label)

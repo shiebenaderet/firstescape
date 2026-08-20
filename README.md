@@ -121,6 +121,18 @@ Register it in `src/activities/index.js`. Any escape can now use `type: 'my-type
 | `computed-lock` | Multi-step lock whose answers are computed from earlier answers/roster. |
 | `constructed-answer` | Free writing validated against custom checks (mottos, cheers, exit tickets). |
 
+## Design & accessibility
+
+The UI uses a warm, friendly "classroom" theme built entirely from CSS variables in
+`src/styles.css` (`:root` tokens), so palettes — and future per-escape themes — are easy to swap.
+
+- **Self-hosted fonts** (`assets/fonts/`, `assets/fonts.css`): [Atkinson Hyperlegible](https://brailleinstitute.org/freefont)
+  (an accessibility-focused body font) + Fredoka (friendly rounded headings). Served locally, so
+  there are no third-party requests from students' browsers and it works offline.
+- **Bigger-text toggle** in the hub header (persisted via `src/engine/prefs.js`) scales the whole app.
+- Visible keyboard focus rings, a "Skip to content" link, `prefers-reduced-motion` support, ARIA
+  labels on the lock dials and sound pads, and captioned media clues.
+
 ## Results submission (optional)
 
 An escape may include a `submission` config to record team results, e.g.:

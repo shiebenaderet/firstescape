@@ -4,6 +4,19 @@
 import { el, clear } from '../engine/dom.js';
 import { loadProgress } from '../engine/storage.js';
 import { loadCompletions } from '../engine/results.js';
+import { isLargeText, toggleLargeText } from '../engine/prefs.js';
+
+const MASCOT_SVG = `
+<svg viewBox="0 0 96 96" role="img" aria-label="Escape Hub key mascot">
+  <rect x="3" y="3" width="90" height="90" rx="24" fill="#f0533f"/>
+  <g transform="rotate(45 48 48)">
+    <circle cx="48" cy="30" r="14" fill="none" stroke="#fff" stroke-width="7"/>
+    <circle cx="48" cy="30" r="4.5" fill="#fff"/>
+    <rect x="44" y="41" width="8" height="34" rx="4" fill="#fff"/>
+    <rect x="52" y="58" width="13" height="7" rx="3.5" fill="#ffd23f"/>
+    <rect x="52" y="67" width="9" height="7" rx="3.5" fill="#ffd23f"/>
+  </g>
+</svg>`;
 
 export function renderHub(root, escapes, { onLaunch, onResults }) {
   const cards = escapes.map((escape) => {
@@ -42,19 +55,32 @@ export function renderHub(root, escapes, { onLaunch, onResults }) {
     ]);
   });
 
+  const textBtn = el('button', {
+    class: 'btn btn-ghost',
+    'aria-pressed': String(isLargeText()),
+    on: {
+      click: () => {
+        const on = toggleLargeText();
+        textBtn.setAttribute('aria-pressed', String(on));
+        textBtn.textContent = on ? 'Aa Normal text' : 'Aa Bigger text';
+      },
+    },
+  }, isLargeText() ? 'Aa Normal text' : 'Aa Bigger text');
+
   const view = el('div', { class: 'hub' }, [
     el('header', { class: 'hub-header' }, [
       el('div', { class: 'hub-brand' }, [
-        el('span', { class: 'hub-logo' }, '🗝️'),
+        el('div', { class: 'hub-logo', html: MASCOT_SVG }),
         el('div', {}, [
-          el('h1', { class: 'hub-title' }, 'Classroom Escape Hub'),
-          el('p', { class: 'hub-tagline' }, 'A growing bank of team escapes — mix, match, and escape together.'),
+          el('h1', { class: 'hub-title' }, [el('span', { class: 'accent' }, 'Escape'), ' Hub']),
+          el('p', { class: 'hub-tagline' }, 'Grab your team, put your heads together, and escape the room — one puzzle at a time.'),
         ]),
       ]),
+      el('div', { class: 'settings' }, [textBtn]),
     ]),
     el('div', { class: 'hub-grid' }, cards),
     el('footer', { class: 'hub-footer' }, [
-      el('p', {}, `${escapes.length} escape${escapes.length === 1 ? '' : 's'} available · more added throughout the year`),
+      el('p', {}, `${escapes.length} escape${escapes.length === 1 ? '' : 's'} ready to play · new ones added through the year`),
     ]),
   ]);
 

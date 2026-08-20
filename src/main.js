@@ -7,9 +7,11 @@ import { listEscapes, getEscape, getBank } from './content/index.js';
 import { renderHub } from './views/hub.js';
 import { renderResults } from './views/results.js';
 import { startEscape } from './engine/engine.js';
+import { applyPrefs } from './engine/prefs.js';
 import { el, clear } from './engine/dom.js';
 
 const root = document.getElementById('app');
+applyPrefs();
 
 function go(hash) {
   if (location.hash === hash) render();

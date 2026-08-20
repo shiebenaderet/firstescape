@@ -41,12 +41,17 @@ export default {
     }
 
     const dials = Array.from({ length: digits }, (_, i) => {
-      const display = el('div', { class: 'dial-display' }, String(values[i]));
+      const display = el('div', {
+        class: 'dial-display',
+        role: 'status',
+        'aria-live': 'polite',
+        'aria-label': `Dial ${i + 1} value`,
+      }, String(values[i]));
       displays.push(display);
       return el('div', { class: 'dial' }, [
-        el('button', { class: 'dial-btn', 'aria-label': 'increase', on: { click: () => roll(i, 1) } }, '▲'),
+        el('button', { class: 'dial-btn', 'aria-label': `Dial ${i + 1} up`, on: { click: () => roll(i, 1) } }, '▲'),
         display,
-        el('button', { class: 'dial-btn', 'aria-label': 'decrease', on: { click: () => roll(i, -1) } }, '▼'),
+        el('button', { class: 'dial-btn', 'aria-label': `Dial ${i + 1} down`, on: { click: () => roll(i, -1) } }, '▼'),
       ]);
     });
 
