@@ -11,8 +11,11 @@
   "observability": { "enabled": true, "head_sampling_rate": 1 },
 
   // Non-secret settings. ALLOWED_ORIGINS is a comma-separated allow-list for CORS.
+  // MEDIA_BASE_URL is the public origin the media bucket is served from (an R2 custom
+  // domain), used to build the absolute URLs stored in an escape's activity.media.src.
   "vars": {
-    "ALLOWED_ORIGINS": "https://escape.mrbsocialstudies.org,http://localhost:8000,http://127.0.0.1:8000"
+    "ALLOWED_ORIGINS": "https://escape.mrbsocialstudies.org,http://localhost:8000,http://127.0.0.1:8000",
+    "MEDIA_BASE_URL": "https://media.mrbsocialstudies.org"
   },
 
   // Rate limiters (Workers Rate Limiting, GA). `period` must be 10 or 60 seconds.
@@ -31,6 +34,22 @@
       "name": "LOGIN_LIMITER",
       "namespace_id": "1002",
       "simple": { "limit": 5, "period": 60 }
+    },
+    {
+      // Clue recording uploads: tight, since only the teacher ever uploads.
+      "name": "MEDIA_LIMITER",
+      "namespace_id": "1003",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ],
+
+  // R2 bucket holding teacher-recorded clue audio/video. Objects live under `clues/` with
+  // server-generated keys. Served publicly via the MEDIA_BASE_URL custom domain, so students
+  // fetch clips straight from Cloudflare's CDN with no Worker in the read path.
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "escape-hub-media"
     }
   ],
 

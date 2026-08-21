@@ -14,15 +14,19 @@
 //   GET    /api/admin/escapes             -> all escapes (incl. drafts)
 //   PUT    /api/admin/escapes/:id  { title, definition, published } -> upsert
 //   DELETE /api/admin/escapes/:id         -> delete
+//   POST   /api/admin/media?type=video|audio -> upload a clue recording to R2
 //
 // Secrets (set via `wrangler secret put` / .dev.vars):
 //   TEACHER_PASSWORD  — the teacher login passphrase
 //   AUTH_SECRET       — HMAC key used to sign session tokens
 //
 // Rate limits (per client IP, configured in wrangler.jsonc):
-//   POST /api/results  — 10/min  (RESULTS_LIMITER)
-//   POST /api/login    —  5/min  (LOGIN_LIMITER)
+//   POST /api/results      — 10/min  (RESULTS_LIMITER)
+//   POST /api/login        —  5/min  (LOGIN_LIMITER)
+//   POST /api/admin/media  —  5/min  (MEDIA_LIMITER)
 //   Over the limit returns 429. Limiters fail open if the binding is absent.
+
+import { validateUpload, mediaKey } from './media.js';
 
 const enc = new TextEncoder();
 
@@ -220,6 +224,38 @@ export default {
       if (pathname.startsWith('/api/admin/')) {
         const claims = await requireAuth(request, env);
         if (!claims) return json({ error: 'Unauthorized' }, 401, request, env);
+
+        // ---- Media upload (teacher clue recordings) ----
+        if (pathname === '/api/admin/media' && method === 'POST') {
+          if (await isRateLimited(env.MEDIA_LIMITER, request)) {
+            return json({ error: 'Too many uploads. Please wait a minute and try again.' }, 429, request, env);
+          }
+          if (!env.MEDIA) {
+            return json({ error: 'Media storage is not configured on this server.' }, 500, request, env);
+          }
+
+          const contentType = request.headers.get('Content-Type') || '';
+          const rawLength = request.headers.get('Content-Length');
+          const contentLength = rawLength == null ? null : Number(rawLength);
+
+          // Validate BEFORE touching the body, so an oversized upload is refused without
+          // ever being buffered or streamed into storage.
+          const check = validateUpload({ contentType, contentLength });
+          if (!check.ok) return json({ error: check.error }, check.status, request, env);
+
+          const key = mediaKey(contentType, crypto.randomUUID());
+          const baseType = contentType.split(';')[0].trim().toLowerCase();
+
+          // Stream straight through to R2 — Workers cap memory at 128 MB, so the file is
+          // never buffered. Keys are unique per upload, so objects are immutable and can be
+          // cached forever; a replacement gets a new key and therefore a new URL.
+          await env.MEDIA.put(key, request.body, {
+            httpMetadata: { contentType: baseType, cacheControl: 'public, max-age=31536000, immutable' },
+          });
+
+          const base = (env.MEDIA_BASE_URL || '').replace(/\/+$/, '');
+          return json({ url: `${base}/${key}`, key, type: baseType, bytes: contentLength }, 201, request, env);
+        }
 
         // Results
         if (pathname === '/api/admin/results' && method === 'GET') {
