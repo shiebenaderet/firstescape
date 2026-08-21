@@ -475,6 +475,25 @@ select.field { cursor: pointer; }
 .option-row { display: flex; gap: 8px; align-items: center; }
 .option-row .field { margin: 0; }
 
+/* ---------------- Clue recorder (builder) ---------------- */
+.recorder { display: flex; flex-direction: column; gap: 10px; }
+.rec-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rec-preview, .rec-playback { width: 100%; max-width: 420px; border-radius: var(--radius-sm); background: #000; }
+.rec-dot { color: var(--red); font-size: 1.2rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .rec-dot { animation: rec-pulse 1.2s ease-in-out infinite; }
+}
+@keyframes rec-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.rec-timer { font-variant-numeric: tabular-nums; font-weight: 800; }
+.rec-error { color: var(--red); font-weight: 700; margin: 0; }
+.rec-warning { color: var(--amber); font-weight: 700; font-size: 0.9rem; margin: 4px 0 0; }
+.rec-text { margin-top: 4px; }
+/* The file input is visually replaced by its styled label. */
+.rec-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.rec-file-label { cursor: pointer; position: relative; }
+.rec-details { border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--surface); }
+.rec-details > summary { cursor: pointer; font-weight: 800; font-family: var(--font-display); }
+
 /* Sequence pads editor (builder) */
 .seq-answer-preview {
   background: var(--bg-tint);

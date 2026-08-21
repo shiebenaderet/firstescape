@@ -8,6 +8,7 @@ import { ACTIVITY_SCHEMAS, getSchema } from '../../activities/schemas.js';
 import { getActivityType } from '../../activities/index.js';
 import { getBuiltinEscapes } from '../../content/index.js';
 import { gameLinkFor } from '../hub.js';
+import { renderRecorder } from './recorder.js';
 
 const EMOJIS = ['🚪', '🧪', '🗝️', '🔐', '🧩', '🔎', '🗺️', '⚡', '🎯', '🏆', '🚀', '🕵️', '📚', '🔬', '🎨', '🎵', '🌟', '🧠', '⏳', '🎲'];
 
@@ -302,6 +303,13 @@ function openEditor(host, source, { onPublished, isNew }) {
     if (!Array.isArray(a.hints)) a.hints = [];
     fields.push(stringListField('Hints (optional)', a.hints));
 
+    // Optional recorded clue. Collapsed unless this challenge already has one, so the common
+    // case (no recording) stays out of the way.
+    fields.push(el('details', { class: 'rec-details', open: !!(a.media && a.media.src) }, [
+      el('summary', {}, '🎙️ Clue recording (optional)'),
+      renderRecorder(a, () => refreshPreview(a)),
+    ]));
+
     return el('div', { class: 'challenge-editor' }, [
       el('div', { class: 'challenge-editor-head' }, [
         el('span', { class: 'challenge-icon' }, a.icon || '🧩'),
@@ -375,6 +383,18 @@ function openEditor(host, source, { onPublished, isNew }) {
     if (!escape.title.trim()) { showSave('error', 'Please give your escape a title.'); return; }
     if (!escape.id) escape.id = slugify(escape.title);
     if (!escape.activities.length) { showSave('error', 'Add at least one challenge.'); return; }
+
+    // A recorded clue must always have its text on screen. Students who cannot hear the clip
+    // — deaf, a broken speaker, a silent-reading classroom — otherwise have no way to solve
+    // the puzzle, so this is enforced rather than merely suggested.
+    const silent = escape.activities.find(
+      (a) => a.media && a.media.src && !String(a.media.text || '').trim()
+    );
+    if (silent) {
+      showSave('error', `“${silent.title || 'A challenge'}” has a recording but no riddle text. Add the text so every student can solve it.`);
+      return;
+    }
+
     showSave('info', 'Saving…');
     try {
       await saveEscape(escape.id, { title: escape.title, definition: escape, published: escape.published });

@@ -92,3 +92,39 @@ export function saveEscape(id, payload) {
 export function deleteEscape(id) {
   return request(`/api/admin/escapes/${encodeURIComponent(id)}`, { method: 'DELETE', auth: true });
 }
+
+/* ---- media uploads ---- */
+
+/**
+ * Upload a recorded clue to R2 and get back its public URL.
+ *
+ * Deliberately bypasses request(): that helper always sets Content-Type to application/json
+ * and JSON.stringify()s the body, which would turn a Blob into the string "{}". Here the raw
+ * blob IS the body, and its own MIME type is what the server validates.
+ *
+ * @param {Blob} blob   the recording (from MediaRecorder or a file input)
+ * @param {'video'|'audio'} kind
+ * @returns {Promise<{url: string, key: string, type: string, bytes: number}>}
+ */
+export async function uploadMedia(blob, kind) {
+  const res = await fetch(`${API_BASE}/api/admin/media?type=${encodeURIComponent(kind)}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      'Content-Type': blob.type || (kind === 'audio' ? 'audio/webm' : 'video/webm'),
+    },
+    body: blob,
+  });
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    /* non-JSON error page */
+  }
+  if (!res.ok) {
+    const err = new Error((data && data.error) || `Upload failed (${res.status})`);
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
