@@ -6,6 +6,22 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses [Semantic Versioning](https://semver.org/): the **frontend and Worker share a
 version**, since an escape definition written by one is read by the other.
 
+## [1.2.0] — 2026-08-20
+
+### Added
+
+- **Clue Recordings tab.** Built-in escapes are JavaScript modules in git, so the visual
+  builder — which saves to the database — cannot edit them and offers no Edit button. That
+  left the two built-in placeholder clips unreachable by the new recorder. A dedicated
+  dashboard tab now lists every built-in challenge that has a clip and lets the teacher record
+  over it. Recordings are stored as an activity-id → media map and applied at load time, so
+  the built-in modules stay untouched and upgradeable.
+  - New endpoints: `GET /api/media-overrides` (public) and `PUT /api/admin/media-overrides`
+    (Bearer). The write handler stores only `src`, `type`, `text`, and `label` — overrides are
+    served publicly and merged into live activities, so anything else is dropped on write.
+  - Replacing a clip clears the "Sample clip" note and drops captions belonging to the old
+    recording, while keeping the riddle text.
+
 ## [1.1.0] — 2026-08-20
 
 ### Added

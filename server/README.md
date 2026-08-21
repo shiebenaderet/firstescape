@@ -11,11 +11,13 @@ teacher-authored custom escapes, and clue-recording storage. Runs on Cloudflare'
 | GET | `/api/health` | — | Health check |
 | GET | `/api/escapes` | — | Published custom escapes (for the hub) |
 | GET | `/api/visibility` | — | Built-in escape ids hidden from the hub |
+| GET | `/api/media-overrides` | — | Teacher recordings replacing built-in clips |
 | POST | `/api/results` | — | Submit a completion (`{ escapeId, record }`) |
 | POST | `/api/login` | — | Teacher login (`{ password }`) → `{ token }` |
 | GET | `/api/admin/results[?escapeId=]` | Bearer | All completions (newest first) |
 | DELETE | `/api/admin/results/:id` | Bearer | Delete a completion |
 | PUT | `/api/admin/visibility` | Bearer | Set hidden built-in escapes |
+| PUT | `/api/admin/media-overrides` | Bearer | Re-record clips for built-in challenges |
 | GET | `/api/admin/escapes` | Bearer | All escapes (incl. drafts) |
 | PUT | `/api/admin/escapes/:id` | Bearer | Create/update an escape |
 | DELETE | `/api/admin/escapes/:id` | Bearer | Delete an escape |

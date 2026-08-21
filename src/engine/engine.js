@@ -8,6 +8,7 @@ import { getActivityType } from '../activities/index.js';
 import { loadProgress, saveProgress, clearProgress } from './storage.js';
 import { recordResults } from './results.js';
 import { renderMedia } from '../views/media.js';
+import { mediaFor } from '../content/index.js';
 import { renderVictory } from '../views/victory.js';
 
 const SOLVE_ADVANCE_DELAY = 1400;
@@ -179,7 +180,7 @@ export function startEscape(root, escape, bank, { onExit } = {}) {
     const card = el('div', { class: 'puzzle-card fade-in' + (alreadySolved ? ' solved' : '') }, [
       el('div', { class: 'puzzle-eyebrow' }, positionLabel),
       el('h2', { class: 'puzzle-title' }, activity.icon ? `${activity.icon} ${activity.title}` : activity.title),
-      renderMedia(activity.media),
+      renderMedia(mediaFor(activity)),
       activity.story ? el('div', { class: 'puzzle-story' }, activity.story) : null,
       solvedBadge,
       activityHost,

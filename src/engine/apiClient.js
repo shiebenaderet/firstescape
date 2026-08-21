@@ -64,6 +64,12 @@ export function fetchVisibility() {
 export function setVisibility(hidden) {
   return request('/api/admin/visibility', { method: 'PUT', body: { hidden }, auth: true });
 }
+export function fetchMediaOverrides() {
+  return request('/api/media-overrides').then((d) => (d && d.overrides) || {});
+}
+export function setMediaOverrides(overrides) {
+  return request('/api/admin/media-overrides', { method: 'PUT', body: { overrides }, auth: true });
+}
 export function submitResult(escapeId, record) {
   return request('/api/results', { method: 'POST', body: { escapeId, record } });
 }

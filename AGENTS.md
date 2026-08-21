@@ -65,6 +65,16 @@ build if you forget.
 - Teacher recordings are captured by `src/views/teacher/recorder.js` and uploaded via
   `POST /api/admin/media`. Transitions live in `recorderState.js` as a pure reducer so they are
   testable without a browser — put new recorder logic there, not in the DOM code.
+- **Built-in escapes have no Edit button by design** — they are JS modules in git, and the
+  builder writes escape definitions to D1. Their clips are still replaceable through the
+  dashboard's "Clue Recordings" tab, which stores an activityId → media patch map (D1 setting
+  `media_overrides`, same mechanism as hub visibility). `mediaFor()` in `src/content/index.js`
+  applies it at render time.
+- **Always read clue media through `mediaFor(activity)`, never `activity.media` directly** —
+  otherwise teacher re-recordings are ignored. `mediaFor` returns a copy, so the shared bank is
+  never mutated.
+- The override handler stores only `src`/`type`/`text`/`label`. Overrides are served publicly
+  and merged into live activities, so anything not on that allowlist is dropped on write.
 
 ### Results (replaces the old Google Form)
 

@@ -15,6 +15,9 @@
 //   PUT    /api/admin/escapes/:id  { title, definition, published } -> upsert
 //   DELETE /api/admin/escapes/:id         -> delete
 //   POST   /api/admin/media?type=video|audio -> upload a clue recording to R2
+//   PUT    /api/admin/media-overrides { overrides } -> re-recorded clips for built-in challenges
+//
+// Public companion: GET /api/media-overrides -> the same map, applied to built-ins at load.
 //
 // Secrets (set via `wrangler secret put` / .dev.vars):
 //   TEACHER_PASSWORD  — the teacher login passphrase
@@ -166,6 +169,13 @@ export default {
         return json({ hidden }, 200, request, env);
       }
 
+      // ---- Public: teacher-recorded clips replacing built-in placeholders ----
+      // Built-in escapes live in git, so their clips cannot be edited by the builder (which
+      // writes to D1). This map of activityId -> media patch is applied at load time instead.
+      if (pathname === '/api/media-overrides' && method === 'GET') {
+        return json({ overrides: await getMediaOverrides(env) }, 200, request, env);
+      }
+
       // ---- Public: list published custom escapes ----
       if (pathname === '/api/escapes' && method === 'GET') {
         const { results } = await env.DB.prepare(
@@ -272,6 +282,28 @@ export default {
           return json({ ok: true }, 200, request, env);
         }
 
+        // Clip overrides for built-in challenges
+        if (pathname === '/api/admin/media-overrides' && method === 'PUT') {
+          const body = await readJson(request);
+          const incoming = body && typeof body.overrides === 'object' && body.overrides ? body.overrides : null;
+          if (!incoming) return json({ error: 'overrides object is required' }, 400, request, env);
+
+          // Store only the fields a recording may change, so a malformed client can never
+          // inject arbitrary keys into an activity at play time.
+          const clean = {};
+          for (const [id, patch] of Object.entries(incoming)) {
+            if (!patch || typeof patch !== 'object') continue;
+            const entry = {};
+            if (patch.src) entry.src = String(patch.src).slice(0, 512);
+            if (patch.type) entry.type = patch.type === 'audio' ? 'audio' : 'video';
+            if (patch.text != null) entry.text = String(patch.text).slice(0, 2000);
+            if (patch.label != null) entry.label = String(patch.label).slice(0, 200);
+            if (entry.src) clean[String(id).slice(0, 128)] = entry;
+          }
+          await setSetting(env, 'media_overrides', JSON.stringify(clean));
+          return json({ ok: true, overrides: clean }, 200, request, env);
+        }
+
         // Visibility of built-in rooms
         if (pathname === '/api/admin/visibility' && method === 'PUT') {
           const body = await readJson(request);
@@ -333,6 +365,12 @@ async function setSetting(env, key, value) {
 async function getHiddenEscapes(env) {
   const raw = await getSetting(env, 'hidden_escapes');
   return raw ? safeParse(raw) || [] : [];
+}
+
+/** activityId -> { src, type?, text?, label? } for built-in challenges whose clip was re-recorded. */
+async function getMediaOverrides(env) {
+  const raw = await getSetting(env, 'media_overrides');
+  return raw ? safeParse(raw) || {} : {};
 }
 
 /* ------------------------------ small utils ----------------------------- */

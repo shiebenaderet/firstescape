@@ -16,6 +16,28 @@ const BUILTIN_ESCAPES = [gettingToKnowYou, cipherLab, quickMixer];
 
 let customEscapes = [];
 let hiddenIds = new Set();
+let mediaOverrides = {};
+
+/**
+ * Apply teacher-recorded clips to built-in activities.
+ *
+ * Built-in escapes live in git, so the visual builder (which saves to D1) cannot edit them.
+ * Instead the dashboard stores an activityId -> media patch map, applied here at load time.
+ * An override replaces the placeholder clip and clears the `placeholder` flag with it.
+ */
+export function setMediaOverrideMap(map) {
+  mediaOverrides = map && typeof map === 'object' ? map : {};
+}
+
+/** The media for an activity, with any teacher recording merged in. */
+export function mediaFor(activity) {
+  const patch = activity && activity.id ? mediaOverrides[activity.id] : null;
+  if (!patch || !patch.src) return activity ? activity.media : undefined;
+  const merged = { ...(activity.media || {}), ...patch };
+  delete merged.placeholder;   // a real recording is not a stand-in
+  delete merged.captions;      // captions belonged to the replaced clip
+  return merged;
+}
 
 /** Merge in custom escapes (from the API). Each is a full escape object with a unique id. */
 export function registerCustomEscapes(list) {

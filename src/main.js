@@ -4,13 +4,13 @@
 //   #/results/<escapeId>  -> quick per-escape results (local device)
 //   #/teacher             -> teacher dashboard (login → results + escape builder)
 
-import { listVisibleEscapes, getEscape, getBank, registerCustomEscapes, setHiddenEscapes } from './content/index.js';
+import { listVisibleEscapes, getEscape, getBank, registerCustomEscapes, setHiddenEscapes, setMediaOverrideMap } from './content/index.js';
 import { renderHub } from './views/hub.js';
 import { renderResults } from './views/results.js';
 import { renderTeacher } from './views/teacher/index.js';
 import { startEscape } from './engine/engine.js';
 import { applyPrefs } from './engine/prefs.js';
-import { fetchPublishedEscapes, fetchVisibility, apiEnabled } from './engine/apiClient.js';
+import { fetchPublishedEscapes, fetchVisibility, fetchMediaOverrides, apiEnabled } from './engine/apiClient.js';
 import { el, clear } from './engine/dom.js';
 
 const root = document.getElementById('app');
@@ -65,9 +65,14 @@ function renderNotFound() {
 async function loadCustomEscapes() {
   if (!apiEnabled()) return;
   try {
-    const [list, hidden] = await Promise.all([fetchPublishedEscapes(), fetchVisibility()]);
+    const [list, hidden, overrides] = await Promise.all([
+      fetchPublishedEscapes(),
+      fetchVisibility(),
+      fetchMediaOverrides(),
+    ]);
     registerCustomEscapes(list.map((e) => e.definition).filter(Boolean));
     setHiddenEscapes(hidden);
+    setMediaOverrideMap(overrides);
   } catch {
     /* offline / API down: just show built-in escapes */
   }

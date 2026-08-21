@@ -494,6 +494,12 @@ select.field { cursor: pointer; }
 .rec-details { border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--surface); }
 .rec-details > summary { cursor: pointer; font-weight: 800; font-family: var(--font-display); }
 
+/* Built-in clue recordings panel */
+.builtin-media-list { display: flex; flex-direction: column; gap: 16px; }
+.builtin-media-card { border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; background: var(--surface); }
+.builtin-media-head { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+.builtin-media-riddle { font-style: italic; margin: 0 0 10px; }
+
 /* Sequence pads editor (builder) */
 .seq-answer-preview {
   background: var(--bg-tint);

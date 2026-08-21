@@ -206,6 +206,14 @@ so a clip that will not play never stops a team from finishing.
 `media.src` may be either an absolute URL (dashboard recordings) or a repo-relative path
 (built-in escapes). Both work identically.
 
+### Re-recording built-in clips
+
+Built-in escapes are JavaScript modules in git, so the visual builder — which saves to the
+database — cannot edit them, and they have no Edit button. Their clips are still replaceable:
+the dashboard's **🎙️ Clue Recordings** tab lists every built-in challenge that has one and lets
+you record over it. The recording is stored as an override keyed by activity id and applied at
+load time by `mediaFor()`, so the built-in module itself stays untouched and upgradeable.
+
 ## Design & accessibility
 
 The UI uses a warm, friendly "classroom" theme built entirely from CSS variables in

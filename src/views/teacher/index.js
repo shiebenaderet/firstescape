@@ -4,6 +4,7 @@ import { el, clear, mount } from '../../engine/dom.js';
 import { apiEnabled, isLoggedIn, login, logout } from '../../engine/apiClient.js';
 import { renderTeacherResults } from './results.js';
 import { renderBuilder } from './builder.js';
+import { renderBuiltinMedia } from './builtinMedia.js';
 
 export function renderTeacher(root, { onExit, onRefresh } = {}) {
   if (!apiEnabled()) {
@@ -82,12 +83,14 @@ function renderDashboard(root, { onExit, onRefresh }) {
   const tabsById = {
     results: tabBtn('results', 'Results', '📊'),
     builder: tabBtn('builder', 'Escape Builder', '🛠️'),
+    media: tabBtn('media', 'Clue Recordings', '🎙️'),
   };
-  const tabs = el('div', { class: 'dash-tabs' }, [tabsById.builder, tabsById.results]);
+  const tabs = el('div', { class: 'dash-tabs' }, [tabsById.builder, tabsById.media, tabsById.results]);
 
   function renderTab() {
     clear(content);
     if (activeTab === 'results') renderTeacherResults(content);
+    else if (activeTab === 'media') renderBuiltinMedia(content);
     else renderBuilder(content, { onPublished: onRefresh });
   }
 
