@@ -177,6 +177,35 @@ Register it in `src/activities/index.js`. Any escape can now use `type: 'my-type
 crash students at play time. Use it in code-defined escapes only. Exposing it would first
 require a declarative, JSON-safe formula format.
 
+## Clue recordings (audio / video)
+
+Any activity can carry a `media` clue — a recording of the teacher reading the riddle, shown
+with the text always on screen:
+
+```js
+media: {
+  type: 'video',                                              // or 'audio'
+  src: 'https://media.mrbsocialstudies.org/clues/abc.webm',   // or a repo-relative path
+  text: 'I have keys but no locks…',                          // REQUIRED — always displayed
+  label: 'Mr. B reads the riddle',                            // optional heading
+  captions: 'assets/media/riddle.vtt',                        // optional WebVTT
+}
+```
+
+**Teachers record these in the dashboard.** Open a challenge in the Escape Builder, expand
+**🎙️ Clue recording**, and record with the camera or microphone — preview, retake, then upload.
+Teachers who recorded elsewhere can upload a file instead, and browsers that cannot record fall
+back to the file picker automatically. Clips are stored in Cloudflare R2 and served from a
+public custom domain (see `server/README.md`).
+
+**The riddle text is required whenever a recording exists**, and saving is blocked without it.
+This is deliberate: a clue that only exists as sound is unsolvable for a deaf student, on a
+device with broken audio, or in a silent-reading classroom. The player always renders the text,
+so a clip that will not play never stops a team from finishing.
+
+`media.src` may be either an absolute URL (dashboard recordings) or a repo-relative path
+(built-in escapes). Both work identically.
+
 ## Design & accessibility
 
 The UI uses a warm, friendly "classroom" theme built entirely from CSS variables in

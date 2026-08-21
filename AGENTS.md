@@ -6,9 +6,9 @@
 classroom escape-room games. Plain HTML + CSS + vanilla **ES modules**. No framework, no
 bundler, no build step on the frontend.
 
-There **is** a backend: a small Cloudflare Worker + D1 database in `server/` providing teacher
-login, central results collection, custom escapes authored in the dashboard, and hub
-visibility. The frontend still runs standalone — set `API_BASE = ''` in `src/config.js` and it
+There **is** a backend: a small Cloudflare Worker in `server/` with D1 (results, custom escapes,
+settings) and R2 (teacher clue recordings), providing teacher login, central results collection,
+custom escapes authored in the dashboard, hub visibility, and media uploads. The frontend still runs standalone — set `API_BASE = ''` in `src/config.js` and it
 degrades to built-in escapes with local-only results.
 
 - Entry point: `index.html` → `src/main.js` (hash router: `#/` hub, `#/escape/<id>` runner,
@@ -56,6 +56,15 @@ build if you forget.
   flag when the real recording is dropped in** (search for `TODO(teacher)` in `src/content/bank.js`).
 - The riddle text is always rendered alongside the player, so a clue that cannot be played never
   blocks a team from solving the puzzle.
+- **`media.src` may be a repo-relative path (built-ins) or an absolute R2 URL** (dashboard
+  recordings). `renderMedia()` treats it as an opaque URL, so both work identically — do not add
+  path handling.
+- **`media.text` is mandatory whenever `media.src` is set.** The builder blocks saving without it
+  (`save()` in `src/views/teacher/builder.js`) and `test/mediaGuard.test.js` pins the rule,
+  including a check that the built-in bank complies.
+- Teacher recordings are captured by `src/views/teacher/recorder.js` and uploaded via
+  `POST /api/admin/media`. Transitions live in `recorderState.js` as a pure reducer so they are
+  testable without a browser — put new recorder logic there, not in the DOM code.
 
 ### Results (replaces the old Google Form)
 
