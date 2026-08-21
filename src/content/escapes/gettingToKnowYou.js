@@ -19,6 +19,16 @@ export const gettingToKnowYou = {
 
   activities: [
     // Challenge 1 — Team setup (name game cipher)
+    // Deliberate exception to "action first, forms second": in THIS escape the roster is the
+    // icebreaker, not friction before it — later puzzles are computed from the names and
+    // subjects. Period is still split out so the first tap is instant.
+    {
+      id: 'gtky-period',
+      type: 'class-period',
+      icon: '🏫',
+      title: 'Which Class?',
+      config: { periods: ['1', '2', '4', '5'] },
+    },
     {
       id: 'gtky-team',
       type: 'team-setup',

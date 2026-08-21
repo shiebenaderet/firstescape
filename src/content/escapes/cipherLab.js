@@ -18,13 +18,15 @@ export const cipherLab = {
   intro: 'The lab door sealed shut behind you. Solve each lock in order and you\'ll be out in no time — put your heads together!',
 
   activities: [
+    // One tap to start. The full roster comes after the first puzzle, so a team is solving
+    // something within seconds instead of filling in a form first.
     {
-      id: 'lab-team',
-      type: 'team-setup',
-      icon: '🧑‍🔬',
-      title: 'Lab Team Sign-In',
-      story: 'Before the lab systems wake up, register your research team.',
-      config: { periods: ['1', '2', '3', '4', '5', '6'], minMembers: 2, maxMembers: 4 },
+      id: 'lab-period',
+      type: 'class-period',
+      icon: '🏫',
+      title: 'Badge In',
+      story: 'The lab door scanner needs to know which class you are.',
+      config: { periods: ['1', '2', '4', '5'] },
     },
     {
       id: 'lab-cipher',
@@ -44,6 +46,14 @@ export const cipherLab = {
         'The dial says +3, so each letter was moved 3 forward. Move each one 3 back to read it.',
         'The first letter W becomes T (W→V→U→T). Keep going!',
       ],
+    },
+    {
+      id: 'lab-team',
+      type: 'team-setup',
+      icon: '🧑‍🔬',
+      title: 'Lab Team Sign-In',
+      story: 'Before the lab systems wake up, register your research team.',
+      config: { periods: ['1', '2', '3', '4', '5', '6'], minMembers: 2, maxMembers: 4 },
     },
     {
       id: 'lab-lock',

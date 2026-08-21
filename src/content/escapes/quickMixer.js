@@ -17,6 +17,16 @@ export const quickMixer = {
   intro: 'Only ten minutes on the clock! Race through a few riddles and a quick team challenge to escape.',
 
   activities: [
+    // Period first (one tap), then straight into a riddle. The roster follows — it has to
+    // land before `mixer-exit`, which checks answers against the team's names.
+    {
+      id: 'mixer-period',
+      type: 'class-period',
+      icon: '🏫',
+      title: 'Which Class?',
+      config: { periods: ['1', '2', '4', '5'] },
+    },
+    'riddle-candle',
     {
       id: 'mixer-team',
       type: 'team-setup',
@@ -26,7 +36,6 @@ export const quickMixer = {
       config: { periods: ['1', '2', '3', '4', '5', '6'], minMembers: 2, maxMembers: 4 },
     },
     // Reused straight from the shared bank (mix-and-match):
-    'riddle-candle',
     'riddle-map',
     'math-handshakes',
     {

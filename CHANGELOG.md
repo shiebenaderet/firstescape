@@ -6,6 +6,32 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 This project uses [Semantic Versioning](https://semver.org/): the **frontend and Worker share a
 version**, since an escape definition written by one is read by the other.
 
+## [1.3.0] — 2026-08-20
+
+### Added
+
+- **Class-period quick start.** A new `class-period` activity asks only which class you are
+  in, as a single tap. Available in the builder palette.
+
+### Changed
+
+- **All three escapes now open with a puzzle, not paperwork.** Every escape previously began
+  with the roster form — 7 fields in Getting to Know You, 5 in the others — so a student's
+  first experience of an "escape room" was filling in a form. Each now opens with the
+  one-tap class-period step, and the roster follows (after the first puzzle in Cipher Lab and
+  Quick Mixer; immediately in Getting to Know You, where entering names *is* the icebreaker).
+  Inputs before the first puzzle: **7 → 1, 5 → 1, 5 → 1**.
+- `team-setup` hides its own period dropdown when the value is already known, so students are
+  never asked the same question twice.
+
+### Fixed
+
+- **Touch targets below the 44px minimum.** The builder's move/delete icon buttons were 30px
+  and spaced 2px apart — genuinely hard to hit on the tablets these run on. They keep their
+  visual size but now carry a 44px hit area, with the gap widened so the enlarged targets
+  cannot steal each other's taps. The emoji picker options and the visibility toggle were
+  also under the minimum.
+
 ## [1.2.0] — 2026-08-20
 
 ### Added

@@ -129,6 +129,17 @@ export const ACTIVITY_SCHEMAS = [
     defaults: () => ({ prompt: '', radiusMeters: 40, allowOverride: true }),
   },
   {
+    type: 'class-period',
+    icon: '🏫',
+    label: 'Class period (quick start)',
+    description: 'Just the class period — one tap, so students reach a puzzle fast.',
+    fields: [
+      { key: 'prompt', label: 'Instruction (optional)', kind: 'text', placeholder: 'Which class are you in?' },
+      { key: 'periods', label: 'Class periods', kind: 'stringlist' },
+    ],
+    defaults: () => ({ periods: ['1', '2', '3', '4', '5', '6'] }),
+  },
+  {
     type: 'team-setup',
     icon: '🧑‍🤝‍🧑',
     label: 'Team sign-in',

@@ -32,10 +32,15 @@ export default {
 
     const saved = api.getAnswer() || {};
 
+    // A `class-period` activity may already have collected this (see classPeriod.js). Asking
+    // twice is the kind of small friction that makes an activity feel like paperwork, so when
+    // the period is known we keep the field out of the form and reuse the value.
+    const knownPeriod = ((api.getState().team || {}).period) || saved.period || '';
+
     const periodSelect = el('select', { id: 'period', class: 'field' }, [
-      el('option', { value: '', disabled: true, selected: !saved.period }, 'Select your class period…'),
+      el('option', { value: '', disabled: true, selected: !knownPeriod }, 'Select your class period…'),
       ...periods.map((p) =>
-        el('option', { value: p, selected: saved.period === p }, `Period ${p}`)
+        el('option', { value: p, selected: knownPeriod === p }, `Period ${p}`)
       ),
     ]);
 
@@ -59,8 +64,8 @@ export default {
     }
 
     const body = el('div', { class: 'activity-body' }, [
-      el('label', { class: 'field-label' }, 'Class period'),
-      periodSelect,
+      knownPeriod ? null : el('label', { class: 'field-label' }, 'Class period'),
+      knownPeriod ? null : periodSelect,
       el('label', { class: 'field-label' }, 'Your team'),
       ...rows.map((r, i) =>
         el('div', { class: 'member-row' }, [
@@ -78,7 +83,7 @@ export default {
     host.appendChild(body);
 
     function submit() {
-      const period = periodSelect.value;
+      const period = knownPeriod || periodSelect.value;
       if (!period) {
         api.error('Please select your class period first!');
         return;

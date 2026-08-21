@@ -17,9 +17,11 @@ import combinationLock from './combinationLock.js';
 import sequence from './sequence.js';
 import hiddenClue from './hiddenClue.js';
 import geoCheck from './geoCheck.js';
+import classPeriod from './classPeriod.js';
 import broken from './broken.js';
 
 const ACTIVITY_TYPES = [
+  classPeriod,
   teamSetup,
   multipleChoice,
   textAnswer,
